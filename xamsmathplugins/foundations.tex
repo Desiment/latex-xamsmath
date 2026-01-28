@@ -1,0 +1,92 @@
+% foundations.tex - xamsmath Foundations Plugin
+% Logic, set theory, and topology foundations
+% Requires xamsmath package
+
+%%%%
+%% Foundations: Logic, set theory, topology %%
+%%%%
+
+\ProvideDocumentCommand{\DeclareBracedMathOperator}{smm}{
+  \IfBooleanTF{#1}{\DeclareMathOperator*{#2}{#3}}{\DeclareMathOperator{#2}{#3}}
+}
+
+%%%% Logic
+%% Logic Symbols
+% Basic logical operators
+\let\lor\relax
+\let\lnot\relax
+\let\land\relax
+\newmathcommand{\lor}{\vee}      % Logical implication
+\newmathcommand{\land}{\wedge}      % Logical implication
+\newmathcommand{\lnot}{\neg}      % Logical implication
+\newmathcommand{\limp}{\rightarrow}      % Logical implication
+\newmathcommand{\liff}{\leftrightarrow}  % Logical equivalence
+
+% Modal logic
+\newmathcommand{\nec}{\Box}              % Necessity
+\newmathcommand{\poss}{\Diamond}         % Possibility
+
+
+%%%% Set theory
+\DeclarePairedSplitDelimiter{\set}{\{}{\}}
+
+% Set theory operators
+\DeclareBracedMathOperator{\card}{card}
+\DeclareBracedMathOperator{\powerset}{\mathcal{P}}
+\DeclareBracedMathOperator{\dom}{dom}    % domain
+\DeclareBracedMathOperator{\cod}{cod}    % codomain  
+\DeclareBracedMathOperator{\ran}{ran}    % range (same as codomain)
+\DeclareBracedMathOperator{\field}{field} % field of relation
+
+% Standard function
+\DeclareBracedMathOperator{\id}{id}      % identity
+\DeclareBracedMathOperator{\ind}{\mathbx{1}} % indicator function
+
+% Set operations
+%\let\setminus\relax  % Uncomment if you want to redefine \setminus
+\let\complement\relax
+%\newmathcommand{\setminus}{\mathbin{\circleddash}}  % Alternative minus symbol
+\newmathcommand{\symdiff}{\mathbin{\triangle}}       % Symmetric difference
+\newmathcommand{\complement}[1]{\overline{#1}}      % Set complement
+
+% Function and relation mappings
+\newmathcommand{\injto}{\hookrightarrow}    % Injective mapping
+\newmathcommand{\surto}{\twoheadrightarrow} % Surjective mapping  
+\newmathcommand{\bijto}{\leftrightarrow}    % Bijective mapping
+
+
+%%%% Topology
+% Topological operators
+\DeclareBracedMathOperator{\Cl}{Cl}   % Closure
+\DeclareBracedMathOperator{\Fr}{Fr}   % Boundary (Frontier)
+\DeclareBracedMathOperator{\Int}{Int} % Interior
+\DeclareBracedMathOperator{\Out}{Out} % Exterior
+\DeclareBracedMathOperator{\Hom}{Hom} % Hom-sets (Homology groups)
+
+% Common topological notations
+\newmathcommand{\Borel}{\mathcal{B}}     % Borel sigma-algebra
+
+
+% Example usage:
+%
+% Logic:
+%   $p \limp q$                    % Implication
+%   $p \liff q$                    % Equivalence
+%   $\nec p, \poss p$              % Modal operators
+%
+% Set theory:
+%   $\set{x | x > 0}$              % Set notation with automatic splitting
+%   $\set[\Big]{x | x^2 > 1}$      % Explicit size
+%   $\card(A)$                     % Cardinality
+%   $\powerset{X}$                 % Power set
+%   $\dom{f}, \cod{f}, \ran{f}$    % Function domains
+%   $f: X \injto Y$                % Injective function
+%   $A \symdiff B$                 % Symmetric difference
+%   $\complement{A}$               % Set complement
+%
+% Topology:
+%   $\Cl{A}$                       % Closure of A
+%   $\Int{A}$                      % Interior of A  
+%   $\Fr{A}$                       % Boundary of A
+%   $\Hom(X)$                      % Homology groups
+%   $\Borel$                       % Borel sigma-algebra

@@ -1,0 +1,94 @@
+% probability.tex - xamsmath Probability and Statistics Plugin
+% Probability measures, expectations, distributions, and statistical operators
+% Requires xamsmath package
+
+%%%%
+%% Probability and Statistics
+%%%%
+
+% Split delimiters for conditional notation
+\DeclarePairedSplitDelimiter{\BracesSplit}{(}{)}
+\DeclarePairedSplitDelimiter{\BraketSplit}{[}{]}
+
+% Template for probability-like functionals (P, Law, etc.)
+% Creates commands that can handle conditional arguments in parentheses
+\NewDocumentCommand{\ConditionalFunctional}{mm}{
+    \NewDocumentCommand{#1}{mmm d()}{
+        \IfNoValueTF{##4}{#2##1##2##3}{#2##1##2##3\BracesSplit{##4}}
+    }
+    \piefication{#1}
+}
+
+% Template for expectation-like operators (E, D, etc.)
+% Creates commands that can handle conditional arguments in brackets
+\NewDocumentCommand{\ConditionalFunctionalOperator}{mm}{
+    \NewDocumentCommand{#1}{mmm d[]}{
+        \IfNoValueTF{##4}{#2##1##2##3}{#2##1##2##3\BraketSplit{##4}}
+    }
+    \piefication{#1}
+}
+
+% Define probability and statistical operators
+\let\P\relax  % Redefine \P to avoid conflict with paragraph symbol
+\ConditionalFunctional{\P}{\mathbb{P}}          % Probability measure
+\ConditionalFunctional{\Law}{\mathrm{Law}}      % Law of a random variable
+\ConditionalFunctionalOperator{\E}{\mathbb{E}}  % Expectation
+\ConditionalFunctionalOperator{\D}{\mathbb{D}}  % Variance (some notations)
+\ConditionalFunctionalOperator{\std}{\mathrm{std}}    % Standard deviation
+\ConditionalFunctionalOperator{\mad}{\mathrm{mad}}    % Mean absolute deviation
+\ConditionalFunctionalOperator{\Skew}{\mathrm{skew}}  % Skewness
+\ConditionalFunctionalOperator{\Kurt}{\mathrm{kurt}}  % Kurtosis
+
+% Covariance operator with proper spacing
+\DeclarePairedDelimiterX\covbraces[2]{(}{)}{#1,#2} % Covariance parentheses
+\newmathcommand{\Cov}[2]{\mathrm{Cov}\covbraces{#1}{#2}} % Covariance operator
+
+% Common probability distributions
+\newmathcommand{\Uniform}{\mathcal{U}}  % Uniform distribution
+\newmathcommand{\Normal}{\mathcal{N}}   % Normal distribution
+\newmathcommand{\Poiss}{\mathrm{Poiss}} % Poisson distribution
+\newmathcommand{\Exp}{\mathrm{Exp}}     % Exponential distribution
+
+% Special terminology
+\newtextcommand{\cadlag}{c\`adl\`ag}    % French: "continue à droite, limite à gauche"
+
+
+% Example usage:
+%
+% Probability measures (note PIE notation):
+%   $\P(A)$                          % Probability of event A
+%   $\P^2(A)$                        % Squared probability
+%   $\P(A | B)$                      % Conditional probability
+%   $\P_{X}(A)$                      % Probability under distribution of X
+%   $\P_{X}(A | B)$                  % Conditional probability under distribution of X
+%
+% Expectation and moments (note PIE notation):
+%   $\E[X]$                          % Expectation of X
+%   $\E^2[X]$                        % Squared expectation
+%   $\E[X | Y}$                      % Conditional expectation
+%   $\E_{\P}[X]$                     % Expectation under measure P
+%   $\E_{\P}[X | Y]$                 % Conditional expectation under measure P
+%
+% Statistical operators:
+%   $\D[X]$                          % Variance (alternative notation)
+%   $\std[X]$                        % Standard deviation
+%   $\mad[X]$                        % Mean absolute deviation
+%   $\skew[X]$                       % Skewness
+%   $\kurt[X]$                       % Kurtosis
+%   $\Cov{X}{Y}$                     % Covariance of X and Y
+%
+% Probability distributions:
+%   $X \sim \Uniform(a,b)$           % Uniform distribution
+%   $X \sim \Normal(\mu,\sigma^2)$   % Normal distribution
+%   $X \sim \Poiss(\lambda)$         % Poisson distribution
+%   $X \sim \Exp(\lambda)$           % Exponential distribution
+%
+% Law and special terminology:
+%   $\Law(X)$                        % Law/distribution of X
+%   $\Law(X | Y)$                    % Conditional law of X given Y
+%   $\cadlag$                        % "càdlàg" processes (right-continuous with left limits)
+%
+% Combined examples:
+%   $\E[\Cov{X}{Y} | Z]$              % Conditional expectation of covariance
+%   $\P_{X \sim \Normal(0,1)}(X > 0)$ % Probability under standard normal
+%   $\Law(X | Y = y)$                 % Conditional distribution

@@ -1,0 +1,276 @@
+\documentclass{article}
+\usepackage[all]{xamsmath}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+% Load all plugins
+\XAMSMathLoadPlugin{foundations}
+\XAMSMathLoadPlugin{algebra}
+\XAMSMathLoadPlugin{calculus}
+\XAMSMathLoadPlugin{combinatorics}
+\XAMSMathLoadPlugin{probability}
+
+\DeclareBracedMathOperator*\Res{Res}
+
+
+\title{xamsmath Package Demonstration}
+\author{xamsmath v0.1-alpha}
+\date{}
+
+\begin{document}
+
+\newpage
+
+\maketitle
+
+\begin{abstract}
+  \texttt{xamsmath} is a LaTeX package that extends \texttt{amsmath} with modern LaTeX3 features and enhanced mathematical notation. Main features include Prime/Index/Exponent (PIE) macros handling, automatic delimiter splitting, scalable operators, and a modular plugin system for different mathematical domains. 
+\end{abstract}
+
+\tableofcontents
+
+\section{Core Package Features}
+
+The xamsmath package provides several enhancements to mathematical typesetting. The PIE (Prime, Index, Exponent) based on \texttt{mathcommand} package system allows mathematical commands to properly absorb primes, subscripts, and superscripts that follow them. This provides more natural mathematical notation.
+
+\begin{verbatim}
+% Two methods for PIE handling:
+\newmathcommandPIE{\fallf}[4]  % PIE absorbed as last arguments
+\piefication{\mycmd}           % PIE absorbed before regular arguments
+\end{verbatim}
+
+For complete details on PIE absorption, refer to the \texttt{mathcommand} package documentation.
+
+The \verb|\DeclarePairedSplitDelimiter| command creates delimiters that automatically split at vertical bars, ideal for set notation and conditional expressions.
+
+\begin{verbatim}
+\DeclarePairedSplitDelimiter{\set}{\{}{\}}
+$\set{x | x > 0}$                    % Automatic splitting
+$\set[\Big]{x | x^2 > 1}$            % Explicit size  
+$\set*{\frac{1}{x} | x \neq 0}$      % Auto-scaling
+\end{verbatim}
+
+The starred version \verb|\set*| disables auto-scaling delimiters while the unstarred version uses fixed sizing. This behavior can be configured via package options.
+
+\begin{align*}
+  \set*{\frac{1}{x} | x \neq 0} &\quad\text{No auto-scaling} \\
+  \set[\Big]{x | x^2 > 1} 		&\quad\text{Explicit sizing} \\
+  \set{\frac{1}{x} | x^2 > 0} 	&\quad\text{Auto-scaling} 
+\end{align*}
+
+% Large operators can be dynamically scaled using the scaling package option. Starred versions provide scaled operators while unstarred versions maintain normal sizing.
+%\begin{verbatim}
+%$\sum_{i=1}^n x_i$                    % Normal size
+%$\sum*_{i = 1}^{n}{\frac{1}{x_i^2}}$              % Scaled to match fraction
+%\end{verbatim}
+
+%\begin{align*}
+%  \sum_{i = 1}^{n}{\frac{\displaystyle{{\int}\frac{\dif x_i}{x_i^2}}}{x_i}} &\quad\text{Normal sum operator} \\
+%  \sum*_{i = 1}^{n}{\frac{\displaystyle{{\int}\frac{\dif x_i}{x_i^2}}}{x_i}} &\quad\text{Scaled sum operator}
+%\end{align*}
+
+The \verb|\DeclareBracedMathOperator| command creates operators that can handle different brace types with PIE support and automatic sizing.
+
+\begin{verbatim}
+\DeclareBracedMathOperator{\Res}{Res}
+$\Res_{z = 0} \int f(z)$                         % No braces
+$\Res_{z=0}[f(z)]$                   % Square brackets
+$\Res_{z=0}(f(z))$                   % Parentheses
+$\Res_{z=0}\{f(z)\}$                 % Braces
+\end{verbatim}
+
+\begin{align*}
+  \Res_{\xi = 0} \int f(\xi) &\quad\text{No braces} \\
+  \Res_{\xi=0}[\int f(\xi)] &\quad\text{With square brackets} \\
+  \Res_{\xi=0}(\int f(\xi)) &\quad\text{With parentheses} \\
+  \Res_{\xi=0}{\int f(\xi)} &\quad\text{With braces}
+\end{align*}
+
+\section{Plugins}
+
+\subsection{Foundations Plugin}
+
+The foundations plugin provides enhanced notation for logic, set theory, and topology.
+
+Logic symbols include implication and equivalence with proper spacing:
+\begin{align*}
+p \limp q &\quad\text{Implication} &
+p \liff q &\quad\text{Equivalence} \\
+\nec p &\quad\text{Necessity} &
+\poss p &\quad\text{Possibility}
+\end{align*}
+
+Set theory operations benefit from automatic splitting and proper operator definitions:
+\begin{align*}
+\set{x | x > 0} &\quad\text{Set notation} &
+\card{A} &\quad\text{Cardinality} \\
+\powerset{X} &\quad\text{Power set} &
+A \symdiff B &\quad\text{Symmetric difference} \\
+f: X \injto Y &\quad\text{Injective function} &
+\complement{A} &\quad\text{Set complement}
+\end{align*}
+
+Topological operators provide consistent spacing and sizing:
+\begin{align*}
+\Cl{A} &\quad\text{Closure} &
+\Int{A} &\quad\text{Interior} \\
+\Fr{A} &\quad\text{Boundary} &
+\Hom(X) &\quad\text{Homology groups}
+\end{align*}
+
+\subsection{Algebra Plugin}
+
+The algebra plugin covers complex numbers, linear algebra, and number theory with enhanced notation.
+
+Complex number operations use upright fonts for real and imaginary parts:
+\begin{align*}
+\conj{z} &\quad\text{Conjugate} &
+\abs{z} &\quad\text{Modulus} \\
+\Re(z) &\quad\text{Real part} &
+\Im(z) &\quad\text{Imaginary part}
+\end{align*}
+
+Standard number systems use blackboard bold with consistent styling:
+\[
+\N, \Z, \Q, \R, \C, \H
+\]
+
+Linear algebra operations feature proper delimiter handling and vector notation:
+\begin{align*}
+\norm{v} &\quad\text{Vector norm} &
+\norm[\Big]{Av} &\quad\text{Scaled norm} \\
+\spr{u}{v} &\quad\text{Scalar product} &
+\cpr{u}{v} &\quad\text{Cross product} \\
+\tr(A) &\quad\text{Trace} &
+\rk(A) &\quad\text{Rank}
+\end{align*}
+
+Vector shorthand commands provide concise notation:
+\[
+\va, \vb, \vc, \vd, \ve, \vf, \vg, \vh, \vi, \vj, \vk, \vl, \vm, \vn, \vo, \vp, \vq, \vr, \vs, \vt, \vu, \vv, \vw, \vx, \vy, \vz
+\]
+
+Number theory functions include proper ceiling and floor notation:
+\begin{align*}
+\ceil{x} &\quad\text{Ceiling function} & \floor{x} &\quad\text{Floor function} \\
+\ceil*[\Big]{\frac{x}{2}} &\quad\text{Scaled ceiling} & a \divby b &\quad\text{Divisibility}
+\end{align*}
+
+\subsection{Calculus Plugin}
+
+The calculus plugin provides enhanced notation for differential and integral calculus with proper fraction handling.
+
+Derivative notation supports multiple fraction styles and evaluation points:
+\begin{align*}
+\od{y}{x} &\quad\text{Ordinary derivative} &
+\od^2_{x=0}{y}{x} &\quad\text{Second derivative at point} \\
+\pd{u}{t} &\quad\text{Partial derivative} &
+\pd^2{u}{x \partial y} &\quad\text{Mixed partial derivative}
+\end{align*}
+
+Different fraction styles are available for various contexts:
+\begin{align*}
+\lod{y}{x} &\quad\text{Small fraction derivative} &
+\tod{y}{x} &\quad\text{Text-style fraction} \\
+\lpd{u}{t} &\quad\text{Small fraction partial} &
+\tpd{u}{t} &\quad\text{Text-style partial}
+\end{align*}
+
+Multivariable calculus operators feature proper spacing and sizing:
+\begin{align*}
+\grad f &\quad\text{Gradient} &
+\rot \vec{F} &\quad\text{Curl} \\
+\div \vec{F} &\quad\text{Divergence} &
+\interval{a}{b} &\quad\text{Open interval}
+\end{align*}
+
+\subsection{Combinatorics Plugin}
+
+Combinatorial notations include binomial variants, Stirling numbers, and factorial operations with PIE support.
+
+Combinatorial numbers feature proper delimiter scaling:
+\begin{align*}
+\multbinom{n}{k} &\quad\text{Multiset coefficient} &
+\Stirling{n}{k} &\quad\text{Stirling numbers (2nd kind)} \\
+\stirling{n}{k} &\quad\text{Stirling numbers (1st kind)} &
+\end{align*}
+
+Factorial operations demonstrate PIE notation in practice:
+\begin{align*}
+\fallf{x}^{n} &\quad\text{Falling factorial} &
+\fallf{x}_{k}^{n} &\quad\text{Falling factorial with index} \\
+\risef{x}^{n} &\quad\text{Rising factorial} &
+\risef{x}^{n}_{k} &\quad\text{Rising factorial with index}
+\end{align*}
+
+\subsection{Probability Plugin}
+
+Probability and statistics operators handle conditional notation and distribution specifications with proper spacing.
+
+Probability measures support conditional arguments and distribution specifications:
+\begin{align*}
+\P(A) &\quad\text{Probability measure} &
+\P(A | B) &\quad\text{Conditional probability} \\
+\P_{X}(A) &\quad\text{Under distribution X} &
+\Law(X) &\quad\text{Law of random variable}
+\end{align*}
+
+Expectation and moment operators feature bracket notation for conditions:
+\begin{align*}
+\E[X] &\quad\text{Expectation} &
+  \E[X | \int Y(t)dt] &\quad\text{Conditional expectation} \\
+\E_{\P}[X] &\quad\text{Under measure P} &
+\D[X] &\quad\text{Variance}
+\end{align*}
+
+Statistical operators provide consistent covariance and distribution notation:
+\begin{align*}
+\Cov{X}{Y} &\quad\text{Covariance} &
+\std[X] &\quad\text{Standard deviation} \\
+X \sim \Normal(\mu,\sigma^2) &\quad\text{Normal distribution} &
+X \sim \Uniform(a,b) &\quad\text{Uniform distribution}
+\end{align*}
+
+\subsection{Advanced Examples}
+
+Complex mathematical expressions demonstrate the integration of multiple xamsmath features.
+
+Advanced calculus and analysis expressions benefit from proper operator spacing and delimiter handling:
+\begin{align*}
+\od^2_{\xi=0}{y}{\xi} + \pd{u}{t} &= \grad^2 u \\
+\int_0^\infty e^{-\xi^2} \dif \xi &= \frac{\sqrt{\pi}}{2} \\
+\Res_{z=0}\left[\frac{f(z)}{z^2}\right] &= \lim_{z\to 0} \od{}{z}(z^2 f(z))
+\end{align*}
+
+Combinatorial and probability expressions showcase PIE notation and conditional operators:
+\begin{align*}
+\sum_{k=0}^n \Stirling{n}{k} \risef{\xi}^k &= \xi^n \\
+\E[\Cov{\xi}{\eta} | \zeta] &= 0 \\
+\P_{\xi \sim \Normal(0,1)}(\xi > 1.96) &\approx 0.025
+\end{align*}
+
+Set theory and functional analysis examples demonstrate automatic splitting and operator scaling:
+\begin{align*}
+\set{f: X \bijto Y | \card{X} = \card{Y}} &\quad\text{Bijections between finite sets} \\
+\norm{\sum_{k=1}^\infty \frac{\va_k}{k^2}} &\leq \sum_{k=1}^\infty \frac{\norm*{\va_k}}{k^2} \\
+\Cl\left(\bigcup_{n=1}^\infty A_n\right) &= \bigcup_{n=1}^\infty \Cl(A_n)
+\end{align*}
+
+\section{Package Configuration}
+
+xamsmath supports several options to enable specific features:
+
+\begin{verbatim}
+\usepackage[fonts]{\xamsmath}           % Additional math fonts
+\usepackage[symbols]{\xamsmath}         % Extra mathematical symbols  
+\usepackage[operators]{\xamsmath}       % Additional math operators
+\usepackage[braces]{\xamsmath}          % Improved brace handling
+\usepackage[scaling]{\xamsmath}         % Scalable operator symbols
+\usepackage[eqmicrotype]{\xamsmath}     % Microtypography enhancements
+\usepackage[all]{\xamsmath}             % Enable all features
+\end{verbatim}
+
+The brace handling option swaps the behavior of starred and unstarred commands in paired delimiters, making unstarred commands use auto-scaling by default. The scaling option enables starred versions of large operators that scale to match their content.
+
+\end{document}
