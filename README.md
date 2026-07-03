@@ -40,9 +40,17 @@ project/
 └── main.tex
 ```
 
-## License
-
-This package is released under the LaTeX Project Public License 1.3c or later. See the LICENSE file for complete details.
+## ToDo
+- [ ] Split examples and move them in examples directory
+- [ ] Extend examples and ensure that  each example has code snippet before it (in rendered PDF)
+- [ ] Microtypography features: slight operator extension
+- [ ] Microtypography features: alignment of under/overbraces
+- [ ] Microtypography features: under/overbraces that do not interact with autoscale braces 
+- [ ] Microtypography features: improve fcking xfrac package
+- [ ] Microtypography features: imporved sizes in sub/supscripts (make proper improvement)
+- [ ] Move template macros functionality to seperate project 
+- [ ] MnSymbol export features 
+- [ ] Add links to all mathematically related packages 
 
 ## Version History
 

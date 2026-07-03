@@ -1,0 +1,105 @@
+% algebra.tex - xamsmath Algebra Plugin
+% Algebraic structures, complex numbers, linear algebra, and number theory
+% Requires xamsmath package
+
+%%%%
+%% Algebra
+%%%%
+
+% Provide fallback for \DeclareBracedMathOperator if braces option is disabled
+\ProvideDocumentCommand{\DeclareBracedMathOperator}{smm}{
+  \IfBooleanTF{#1}{\DeclareMathOperator*{#2}{#3}}{\DeclareMathOperator{#2}{#3}}
+}
+
+%%%% Complex numbers
+% Redefine real and imaginary parts to use upright font
+\let\Re\undefined
+\let\Im\undefined
+\newmathcommand{\conj}[1]{\overline{#1}}    % Complex conjugate
+\newmathcommand{\Re}{\mathop{\mathrm{Re}}}  % Real part
+\newmathcommand{\Im}{\mathop{\mathrm{Im}}}  % Imaginary part
+\DeclarePairedDelimiter\abs{\lvert}{\rvert} % Absolute value/modulus
+
+%%%% Basic algebraic structures
+% Number systems using blackboard bold
+\newcommand*{\bbstruct}[1]{\mathbb{#1}}
+\newmathcommand{\N}{\bbstruct{N}}  % Natural numbers
+\newmathcommand{\Z}{\bbstruct{Z}}  % Integers
+\newmathcommand{\Q}{\bbstruct{Q}}  % Rational numbers
+\newmathcommand{\R}{\bbstruct{R}}  % Real numbers
+\newmathcommand{\C}{\bbstruct{C}}  % Complex numbers
+% Quaternions - handle potential conflict with \H command
+\ifdefined\H%
+    \renewmathcommand{\H}{\bbstruct{H}}  % Quaternions
+\else
+    \newmathcommand{\H}{\bbstruct{H}}    % Quaternions
+\fi
+
+%%%% Linear algebra
+
+% Vector norms and products
+\DeclarePairedDelimiterX\norm[1]\lVert\rVert{\ifblank{#1}{\:\cdot\:}{#1}} % Vector norm
+\DeclarePairedDelimiterX\spr[2]{\langle}{\rangle}{\ifblank{#1}{\:\cdot\:}{#1},\ifblank{#2}{\:\cdot\:}{#2}} % Scalar product
+\DeclarePairedDelimiterX\cpr[2]{\lbrack}{\rbrack}{\ifblank{#1}{\:\cdot\:}{#1},\ifblank{#2}{\:\cdot\:}{#2}} % Cross product
+
+% Vector notation system
+% Change \vv to \vec and create shorthand commands: \va = \vec{a}, \vb = \vec{b}, etc.
+\RequirePackage[d]{esvect}
+\RenewCommandCopy{\vec}{\vv}
+\let\vv\relax
+\LoopCommands{abcdefghklmnopqrstuvwxyz}[v#1]{\newmathcommand#2{\vec{#1}}}
+\newmathcommand{\vi}{\vec{\imath}}  % Unit vector i
+\newmathcommand{\vj}{\vec{\jmath}}  % Unit vector j
+
+% Matrix operations
+\DeclareBracedMathOperator{\tr}{tr}     % Trace
+\DeclareBracedMathOperator{\rk}{rank}   % Rank
+\DeclareBracedMathOperator{\perm}{perm} % Permanent
+
+
+%%%% Number theory
+% Paired delimiters for ceil and floor functions
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}   % Ceiling function
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor} % Floor function
+
+% Divisibility relations
+% divby - triple dots (Russian notation: a ⋮ b means b divides a)
+\DeclareRobustCommand{\divby}{%
+  \mathrel{\text{\vbox{\baselineskip.65ex\lineskiplimit0pt\hbox{.}\hbox{.}\hbox{.}}}}%
+}
+% bydiv - vertical bar (International notation: a | b means b divides a)
+\DeclareRobustCommand{\bydiv}{\mathrel{\mid}}
+
+% Negated divisibility relations
+\DeclareRobustCommand{\notdivby}{\centernot\divby}  % Does not divide (Russian)
+\DeclareRobustCommand{\notbydiv}{\centernot\bydiv}  % Does not divide (International)
+
+\makeatother
+
+% Example usage:
+%
+% Complex numbers:
+%   $\conj{z}$                      % Complex conjugate
+%   $\Re(z), \Im(z)$                % Real and imaginary parts
+%   $\abs{z}$                       % Modulus
+%   $\abs[\big]{z+w}$               % Scaled modulus
+%
+% Number systems:
+%   $\N, \Z, \Q, \R, \C, \H$        % Standard number sets
+%
+% Linear algebra:
+%   $\norm{v}$                      % Vector norm
+%   $\norm[\big]{Av}$               % Scaled norm
+%   $\spr{u}{v}$                    % Scalar product
+%   $\cpr{u}{v}$                    % Cross product
+%   $\tr(A), \rk(A), \perm(A)$      % Matrix operations
+%   $\va, \vb, \vc$                 % Vector shorthands
+%   $\vi, \vj$                      % Unit vectors
+%
+% Number theory:
+%   $\ceil{x}, \floor{x}$           % Ceiling and floor
+%   $\ceil[\big]{\frac{x}{2}}$      % Scaled ceiling
+%   $a \divby b$                    % b divides a (Russian)
+%   $a \bydiv b$                    % b divides a (International)
+%   $a \notdivby b$                 % b does not divide a (Russian)
+%   $a \notbydiv b$                 % b does not divide a (International)

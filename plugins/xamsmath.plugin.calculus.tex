@@ -1,0 +1,89 @@
+% calculus.tex - xamsmath Calculus Plugin
+% Differential calculus, integrals, derivatives, and multivariable calculus
+% Requires xamsmath package
+
+%%%%
+%% Calculus
+%%%%
+
+% Provide fallback for \DeclareBracedMathOperator if braces option is disabled
+\ProvideDocumentCommand{\DeclareBracedMathOperator}{smm}{
+  \IfBooleanTF{#1}{\DeclareMathOperator*{#2}{#3}}{\DeclareMathOperator{#2}{#3}}
+}
+
+% Provide fallback for \sfrac if xfrac package is not loaded
+\ProvideDocumentCommand{\sfrac}{mm}{\frac{#1}{#2}} % Fallback to regular fraction
+
+%%%% Common calculus notations
+\DeclarePairedDelimiterX\interval[2]{\langle}{\rangle}{#1;#2} % Interval notation
+\DeclareMathOperator{\sign}{sign}   % Signum function
+\DeclareMathOperator{\supp}{supp}   % Function support
+\newmathcommand{\dif}{\mathop{}\!d} % Small differential (for integrals)
+\newmathcommand{\Dif}{\mathop{}\!D} % Big differential (for derivatives)
+
+%%%% Derivative fractions
+% Advanced derivative notation with automatic fraction handling
+% Provides: \od, \lod, \tod, \dod for ordinary derivatives
+%          \pd, \lpd, \tpd, \dpd for partial derivatives
+\ExplSyntaxOn
+% Generic template for derivative fractions
+% Usage: \tmpl_derivative_frac<differential_symbol, fraction_command>{prime}{numerator}{denominator}
+\NewTemplateCommand\tmpl_derivative_frac<mm>{mmm mm}{
+    \IfEmptyTF{#3}{% Check if prime argument is empty
+        \mleft.#2{#1#5#6}{#1#7#5}\IfEmptyTF{#4}{\mright.}{\mright|}#4% No prime: regular derivative fraction
+    }{
+        \PackageError{xamsmath}{Primes~are~not~allowed~to~be~before~\verb|od|-like~commands}{}% Error for invalid usage
+    }
+}
+
+% Ordinary derivatives with different fraction styles
+\TemplateInstancePIE\od\tmpl_derivative_frac<\dif, \frac>    % Regular fraction
+\TemplateInstancePIE\lod\tmpl_derivative_frac<\dif, \sfrac>  % Small fraction (requires xfrac)
+\TemplateInstancePIE\tod\tmpl_derivative_frac<\dif, \tfrac>  % Text-style fraction  
+\TemplateInstancePIE\dod\tmpl_derivative_frac<\dif, \dfrac>  % Display-style fraction
+
+% Partial derivatives with different fraction styles
+\TemplateInstancePIE\pd\tmpl_derivative_frac<\partial, \frac>    % Regular fraction
+\TemplateInstancePIE\lpd\tmpl_derivative_frac<\partial, \sfrac>  % Small fraction (requires xfrac)
+\TemplateInstancePIE\tpd\tmpl_derivative_frac<\partial, \tfrac>  % Text-style fraction
+\TemplateInstancePIE\dpd\tmpl_derivative_frac<\partial, \dfrac>  % Display-style fraction
+\ExplSyntaxOff
+
+%%%% Multivariable calculus operators
+% Redefine div to avoid conflict with division symbol
+\let\div\relax
+\DeclareBracedMathOperator{\grad}{grad}  % Gradient
+\DeclareBracedMathOperator{\rot}{rot}    % Rotation (curl)
+\DeclareBracedMathOperator{\div}{div}    % Divergence
+
+
+% Example usage:
+%
+% Common notations:
+%   $\interval{a}{b}$               % Open interval
+%   $\sign(x), \supp(f)$            % Signum and support
+%   $\int f(x) \dif x$              % Differential in integrals
+%
+% Ordinary derivatives (note PIE notation):
+%   $\od{y}{x}$                     % dy/dx
+%   $\od^2{y}{x}$                   % d²y/dx² (second derivative)
+%   $\od^n{y}{x}$                   % dⁿy/dxⁿ (n-th derivative)
+%   $\od_{x=0}{y}{x}$               % dy/dx evaluated at x=0
+%   $\od^2_{x=0}{y}{x}$             % d²y/dx² evaluated at x=0
+%
+% Partial derivatives (note PIE notation):
+%   $\pd{u}{t}$                     % ∂u/∂t
+%   $\pd^2{u}{x^2}$                 % ∂²u/∂x²
+%   $\pd^2{u}{x \partial y}$        % ∂²u/∂x∂y
+%   $\pd_{t=0}{u}{t}$               % ∂u/∂t evaluated at t=0
+%
+% Fraction style variants:
+%   $\lod{y}{x}$                    % dy/dx (small fraction) 
+%   $\tod{y}{x}$                    % dy/dx (text-style fraction)
+%   $\lpd{u}{t}$                    % ∂u/∂t (small fraction)
+%   $\tpd{u}{t}$                    % ∂u/∂t (text-style fraction)
+%
+% Multivariable calculus:
+%   $\grad f$                       % Gradient of f
+%   $\rot \vec{F}$                  % Curl of vector field F  
+%   $\div \vec{F}$                  % Divergence of vector field F
