@@ -1,45 +1,139 @@
-% combinatorics.tex - xamsmath Combinatorics Plugin
-% Combinatorial notations: binomial coefficients, Stirling numbers, falling/rising factorials
-% Requires xamsmath package
+% =============================================================================
+%                            COMBINATORICS PLUGIN
+% =============================================================================
+%
+% Combinatorial notation for binomial variants, Stirling numbers, and PIE-aware
+% falling and rising factorials.
+%
+% Requires:
+%   xamsmath core helpers and mathcommand PIE support.
 
+% =============================================================================
+%                          COMBINATORIAL NUMBERS
+% =============================================================================
 
-%%%%
-%% Combinatorics
-%%%%
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \multbinom
+%
+% Purpose:
+%   Typesets the multiset coefficient, commonly read as combinations with
+%   repetition.
+%
+% Parameters:
+%   #1 - Upper argument, usually the number of available element types.
+%   #2 - Lower argument, usually the number of chosen elements.
+%
+% Usage:
+%   \multbinom{n}{k}
 
-% Multiset coefficient: ((n k)) - number of ways to choose k elements from n with repetition
 \newmathcommand{\multbinom}[2]{\left(\kern-.3em\left(\genfrac{}{}{0pt}{}{#1}{#2}\right)\kern-.3em\right)}
 
-% Stirling numbers of the second kind: {n k} - number of ways to partition n elements into k non-empty subsets
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \Stirling
+%
+% Purpose:
+%   Typesets Stirling numbers of the second kind with brace delimiters.
+%
+% Parameters:
+%   #1 - Number of elements being partitioned.
+%   #2 - Number of non-empty subsets.
+%
+% Usage:
+%   \Stirling{n}{k}
+
 \newmathcommand{\Stirling}[2]{\left\{\genfrac{}{}{0pt}{}{#1}{#2}\right\}}
 
-% Stirling numbers of the first kind: [n k] - number of permutations of n elements with k cycles
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \stirling
+%
+% Purpose:
+%   Typesets Stirling numbers of the first kind with bracket delimiters.
+%
+% Parameters:
+%   #1 - Number of permuted elements.
+%   #2 - Number of cycles.
+%
+% Usage:
+%   \stirling{n}{k}
+
 \newmathcommand{\stirling}[2]{\left[\genfrac{}{}{0pt}{}{#1}{#2}\right]}
 
-% Falling factorial: x^\underline{n} = x(x-1)(x-2)...(x-n+1)
+% =============================================================================
+%                             FACTORIAL SYMBOLS
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \fallf
+%
+% Purpose:
+%   Typesets the falling factorial using an underlined exponent. The command is
+%   PIE-aware, so subscripts and superscripts following the argument are absorbed
+%   into the generated symbol.
+%
+% Parameters:
+%   #1 - Base expression.
+%
+% PIE parameters:
+%   #2 - Prime tokens absorbed by mathcommand.
+%   #3 - Index tokens absorbed by mathcommand.
+%   #4 - Exponent tokens absorbed by mathcommand.
+%
+% Usage:
+%   \fallf{x}^{n}
+%   \fallf{x}_{k}^{n}
+
 \newcommandPIE{\fallf}[1]{{#1^{\underline{\GetExponent{#4}}}_{\GetIndex{#3}}}#2}
 
-% Rising factorial (Pochhammer symbol): x^\overline{n} = x(x+1)(x+2)...(x+n-1)
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \risef
+%
+% Purpose:
+%   Typesets the rising factorial, or Pochhammer symbol, using an overlined
+%   exponent. The command is PIE-aware, so subscripts and superscripts following
+%   the argument are absorbed into the generated symbol.
+%
+% Parameters:
+%   #1 - Base expression.
+%
+% PIE parameters:
+%   #2 - Prime tokens absorbed by mathcommand.
+%   #3 - Index tokens absorbed by mathcommand.
+%   #4 - Exponent tokens absorbed by mathcommand.
+%
+% Usage:
+%   \risef{x}^{n}
+%   \risef{x}_{k}^{n}
+
 \newcommandPIE{\risef}[1]{{#1^{\overline{\GetExponent{#4}}}_{\GetIndex{#3}}}#2}
 
-
-% Example usage:
+% =============================================================================
+%                                USAGE NOTES
+% =============================================================================
 %
 % Multiset coefficients:
-%   $\multbinom{n}{k}$              % Number of k-combinations with repetition from n elements
+%   \multbinom{n}{k}
 %
 % Stirling numbers:
-%   $\Stirling{n}{k}$               % Stirling numbers of the second kind
-%   $\stirling{n}{k}$               % Stirling numbers of the first kind
+%   \Stirling{n}{k}
+%   \stirling{n}{k}
 %
-% Falling factorials (note PIE notation):
-%   $\fallf{x}^{n}$                  % x^\underline{n} - falling factorial
-%   $\fallf{x}_{k}^{n}$             % x_{k}^\underline{n}
-%
-% Rising factorials (note PIE notation):
-%   $\risef{x}^{n}$                  % x^\overline{n} - rising factorial (Pochhammer symbol)
-%   $\risef{x}^{n}_{k}$              % x_k^\overline{n}
-%
-% Combinatorial identities:
-%   $\sum_{k=0}^n \Stirling{n}{k} \risef{x}{k} = x^n$  % Expansion of x^n in terms of rising factorials
-%   $\fallf{x}{n} = \sum_{k=0}^n \stirling{n}{k} x^k$  % Expansion of falling factorial
+% Falling and rising factorials:
+%   \fallf{x}^{n}
+%   \fallf{x}_{k}^{n}
+%   \risef{x}^{n}
+%   \risef{x}_{k}^{n}

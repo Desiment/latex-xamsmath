@@ -1,92 +1,480 @@
-% foundations.tex - xamsmath Foundations Plugin
-% Logic, set theory, and topology foundations
-% Requires xamsmath package
+% =============================================================================
+%                             FOUNDATIONS PLUGIN
+% =============================================================================
+%
+% Logic, set theory, mappings, and topology notation.
+%
+% Requires:
+%   xamsmath core helpers. The braces option is optional because this plugin
+%   provides a fallback for \DeclareBracedMathOperator.
 
-%%%%
-%% Foundations: Logic, set theory, topology %%
-%%%%
+% =============================================================================
+%                              FALLBACK SUPPORT
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \DeclareBracedMathOperator
+%
+% Purpose:
+%   Provides ordinary AMS operator declarations when the braces module has not
+%   already supplied the richer braced-operator implementation.
+%
+% Parameters:
+%   *  - Optional star requests limit-style operator placement.
+%   #1 - Operator command to define.
+%   #2 - Operator text to display.
+%
+% Usage:
+%   \DeclareBracedMathOperator{\card}{card}
 
 \ProvideDocumentCommand{\DeclareBracedMathOperator}{smm}{
   \IfBooleanTF{#1}{\DeclareMathOperator*{#2}{#3}}{\DeclareMathOperator{#2}{#3}}
 }
 
-%%%% Logic
-%% Logic Symbols
-% Basic logical operators
+% =============================================================================
+%                                  LOGIC
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% Logical Connectives
+% -----------------------------------------------------------------------------
+%
+% Standard LaTeX logical connective names are relaxed before redefining them as
+% mathcommand-aware aliases.
+
 \let\lor\relax
 \let\lnot\relax
 \let\land\relax
-\newmathcommand{\lor}{\vee}      % Logical implication
-\newmathcommand{\land}{\wedge}      % Logical implication
-\newmathcommand{\lnot}{\neg}      % Logical implication
-\newmathcommand{\limp}{\rightarrow}      % Logical implication
-\newmathcommand{\liff}{\leftrightarrow}  % Logical equivalence
 
-% Modal logic
-\newmathcommand{\nec}{\Box}              % Necessity
-\newmathcommand{\poss}{\Diamond}         % Possibility
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \lor
+%
+% Purpose:
+%   Typesets logical disjunction.
+%
+% Usage:
+%   p \lor q
 
+\newmathcommand{\lor}{\vee}
 
-%%%% Set theory
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \land
+%
+% Purpose:
+%   Typesets logical conjunction.
+%
+% Usage:
+%   p \land q
+
+\newmathcommand{\land}{\wedge}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \lnot
+%
+% Purpose:
+%   Typesets logical negation.
+%
+% Usage:
+%   \lnot p
+
+\newmathcommand{\lnot}{\neg}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \limp
+%
+% Purpose:
+%   Typesets logical implication.
+%
+% Usage:
+%   p \limp q
+
+\newmathcommand{\limp}{\rightarrow}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \liff
+%
+% Purpose:
+%   Typesets logical equivalence.
+%
+% Usage:
+%   p \liff q
+
+\newmathcommand{\liff}{\leftrightarrow}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \nec
+%
+% Purpose:
+%   Typesets the modal necessity operator.
+%
+% Usage:
+%   \nec p
+
+\newmathcommand{\nec}{\Box}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \poss
+%
+% Purpose:
+%   Typesets the modal possibility operator.
+%
+% Usage:
+%   \poss p
+
+\newmathcommand{\poss}{\Diamond}
+
+% =============================================================================
+%                                SET THEORY
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \set
+%
+% Purpose:
+%   Declares split set-builder delimiters. A single vertical bar separates the
+%   set expression from its condition.
+%
+% Parameters:
+%   #1 - Set contents, optionally containing one | separator.
+%
+% Usage:
+%   \set{x | x > 0}
+%   \set[\Big]{x | x^2 > 1}
+
 \DeclarePairedSplitDelimiter{\set}{\{}{\}}
 
-% Set theory operators
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \card
+%
+% Purpose:
+%   Typesets the cardinality operator.
+%
+% Usage:
+%   \card(A)
+
 \DeclareBracedMathOperator{\card}{card}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \powerset
+%
+% Purpose:
+%   Typesets the power-set operator.
+%
+% Usage:
+%   \powerset(X)
+
 \DeclareBracedMathOperator{\powerset}{\mathcal{P}}
-\DeclareBracedMathOperator{\dom}{dom}    % domain
-\DeclareBracedMathOperator{\cod}{cod}    % codomain  
-\DeclareBracedMathOperator{\ran}{ran}    % range (same as codomain)
-\DeclareBracedMathOperator{\field}{field} % field of relation
 
-% Standard function
-\DeclareBracedMathOperator{\id}{id}      % identity
-\DeclareBracedMathOperator{\ind}{\mathbx{1}} % indicator function
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \dom
+%
+% Purpose:
+%   Typesets the domain operator.
+%
+% Usage:
+%   \dom(f)
 
-% Set operations
-%\let\setminus\relax  % Uncomment if you want to redefine \setminus
+\DeclareBracedMathOperator{\dom}{dom}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \cod
+%
+% Purpose:
+%   Typesets the codomain operator.
+%
+% Usage:
+%   \cod(f)
+
+\DeclareBracedMathOperator{\cod}{cod}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \ran
+%
+% Purpose:
+%   Typesets the range operator.
+%
+% Usage:
+%   \ran(f)
+
+\DeclareBracedMathOperator{\ran}{ran}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \field
+%
+% Purpose:
+%   Typesets the field of a relation.
+%
+% Usage:
+%   \field(R)
+
+\DeclareBracedMathOperator{\field}{field}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \id
+%
+% Purpose:
+%   Typesets the identity map operator.
+%
+% Usage:
+%   \id_X
+
+\DeclareBracedMathOperator{\id}{id}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \ind
+%
+% Purpose:
+%   Typesets an indicator-function operator with a double-struck one.
+%
+% Usage:
+%   \ind_A(x)
+
+\DeclareBracedMathOperator{\ind}{\mathbx{1}}
+
+% -----------------------------------------------------------------------------
+% Set Operations
+% -----------------------------------------------------------------------------
+%
+% \complement is relaxed before being redefined as an overline operation.
+
 \let\complement\relax
-%\newmathcommand{\setminus}{\mathbin{\circleddash}}  % Alternative minus symbol
-\newmathcommand{\symdiff}{\mathbin{\triangle}}       % Symmetric difference
-\newmathcommand{\complement}[1]{\overline{#1}}      % Set complement
 
-% Function and relation mappings
-\newmathcommand{\injto}{\hookrightarrow}    % Injective mapping
-\newmathcommand{\surto}{\twoheadrightarrow} % Surjective mapping  
-\newmathcommand{\bijto}{\leftrightarrow}    % Bijective mapping
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \symdiff
+%
+% Purpose:
+%   Typesets symmetric difference as a binary triangle operator.
+%
+% Usage:
+%   A \symdiff B
 
+\newmathcommand{\symdiff}{\mathbin{\triangle}}
 
-%%%% Topology
-% Topological operators
-\DeclareBracedMathOperator{\Cl}{Cl}   % Closure
-\DeclareBracedMathOperator{\Fr}{Fr}   % Boundary (Frontier)
-\DeclareBracedMathOperator{\Int}{Int} % Interior
-\DeclareBracedMathOperator{\Out}{Out} % Exterior
-\DeclareBracedMathOperator{\Hom}{Hom} % Hom-sets (Homology groups)
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \complement
+%
+% Purpose:
+%   Typesets set complement using an overline.
+%
+% Parameters:
+%   #1 - Set expression to complement.
+%
+% Usage:
+%   \complement{A}
 
-% Common topological notations
-\newmathcommand{\Borel}{\mathcal{B}}     % Borel sigma-algebra
+\newmathcommand{\complement}[1]{\overline{#1}}
 
+% =============================================================================
+%                            FUNCTION MAPPINGS
+% =============================================================================
 
-% Example usage:
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \injto
+%
+% Purpose:
+%   Typesets an injective mapping arrow.
+%
+% Usage:
+%   f: X \injto Y
+
+\newmathcommand{\injto}{\hookrightarrow}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \surto
+%
+% Purpose:
+%   Typesets a surjective mapping arrow.
+%
+% Usage:
+%   f: X \surto Y
+
+\newmathcommand{\surto}{\twoheadrightarrow}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \bijto
+%
+% Purpose:
+%   Typesets a bijective mapping arrow.
+%
+% Usage:
+%   f: X \bijto Y
+
+\newmathcommand{\bijto}{\leftrightarrow}
+
+% =============================================================================
+%                                  TOPOLOGY
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \Cl
+%
+% Purpose:
+%   Typesets the closure operator.
+%
+% Usage:
+%   \Cl(A)
+
+\DeclareBracedMathOperator{\Cl}{Cl}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \Fr
+%
+% Purpose:
+%   Typesets the frontier or boundary operator.
+%
+% Usage:
+%   \Fr(A)
+
+\DeclareBracedMathOperator{\Fr}{Fr}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \Int
+%
+% Purpose:
+%   Typesets the interior operator.
+%
+% Usage:
+%   \Int(A)
+
+\DeclareBracedMathOperator{\Int}{Int}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \Out
+%
+% Purpose:
+%   Typesets the exterior operator.
+%
+% Usage:
+%   \Out(A)
+
+\DeclareBracedMathOperator{\Out}{Out}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \Hom
+%
+% Purpose:
+%   Typesets Hom-sets or homology-group notation, depending on context.
+%
+% Usage:
+%   \Hom(X,Y)
+
+\DeclareBracedMathOperator{\Hom}{Hom}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \Borel
+%
+% Purpose:
+%   Typesets the Borel sigma-algebra symbol.
+%
+% Usage:
+%   \Borel(X)
+
+\newmathcommand{\Borel}{\mathcal{B}}
+
+% =============================================================================
+%                                USAGE NOTES
+% =============================================================================
 %
 % Logic:
-%   $p \limp q$                    % Implication
-%   $p \liff q$                    % Equivalence
-%   $\nec p, \poss p$              % Modal operators
+%   p \limp q
+%   p \liff q
+%   \nec p
+%   \poss p
 %
 % Set theory:
-%   $\set{x | x > 0}$              % Set notation with automatic splitting
-%   $\set[\Big]{x | x^2 > 1}$      % Explicit size
-%   $\card(A)$                     % Cardinality
-%   $\powerset{X}$                 % Power set
-%   $\dom{f}, \cod{f}, \ran{f}$    % Function domains
-%   $f: X \injto Y$                % Injective function
-%   $A \symdiff B$                 % Symmetric difference
-%   $\complement{A}$               % Set complement
+%   \set{x | x > 0}
+%   \card(A)
+%   \powerset(X)
+%   \dom(f)
+%   \complement{A}
 %
-% Topology:
-%   $\Cl{A}$                       % Closure of A
-%   $\Int{A}$                      % Interior of A  
-%   $\Fr{A}$                       % Boundary of A
-%   $\Hom(X)$                      % Homology groups
-%   $\Borel$                       % Borel sigma-algebra
+% Mappings and topology:
+%   f: X \injto Y
+%   f: X \surto Y
+%   \Cl(A)
+%   \Int(A)
+%   \Borel

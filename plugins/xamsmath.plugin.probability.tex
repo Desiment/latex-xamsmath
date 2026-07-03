@@ -1,17 +1,81 @@
-% probability.tex - xamsmath Probability and Statistics Plugin
-% Probability measures, expectations, distributions, and statistical operators
-% Requires xamsmath package
+% =============================================================================
+%                             PROBABILITY PLUGIN
+% =============================================================================
+%
+% Probability measures, expectations, distributions, covariance, and common
+% statistical operators.
+%
+% Requires:
+%   xamsmath core helpers and mathcommand PIE support.
 
-%%%%
-%% Probability and Statistics
-%%%%
+% =============================================================================
+%                         CONDITIONAL DELIMITERS
+% =============================================================================
 
-% Split delimiters for conditional notation
+% -----------------------------------------------------------------------------
+% Internal Commands
+% -----------------------------------------------------------------------------
+%
+% \BracesSplit
+%
+% Purpose:
+%   Parenthesized split delimiter for conditional probability-like expressions.
+%
+% Parameters:
+%   #1 - Expression before a vertical bar.
+%   #2 - Expression after a vertical bar.
+%
+% Usage:
+%   Internal use by probability functionals.
+
 \DeclarePairedSplitDelimiter{\BracesSplit}{(}{)}
+
+% -----------------------------------------------------------------------------
+% Internal Commands
+% -----------------------------------------------------------------------------
+%
+% \BraketSplit
+%
+% Purpose:
+%   Bracketed split delimiter for expectation-like expressions.
+%
+% Parameters:
+%   #1 - Expression before a vertical bar.
+%   #2 - Expression after a vertical bar.
+%
+% Usage:
+%   Internal use by expectation and moment operators.
+
 \DeclarePairedSplitDelimiter{\BraketSplit}{[}{]}
 
-% Template for probability-like functionals (P, Law, etc.)
-% Creates commands that can handle conditional arguments in parentheses
+% =============================================================================
+%                         CONDITIONAL TEMPLATES
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% Internal Commands
+% -----------------------------------------------------------------------------
+%
+% \ConditionalFunctional
+%
+% Purpose:
+%   Defines a PIE-aware probability-like functional whose optional conditional
+%   argument is written in parentheses.
+%
+% Parameters:
+%   #1 - Command to define.
+%   #2 - Printed functional head, such as \mathbb{P}.
+%
+% Generated command parameters:
+%   #1 - Prime tokens absorbed by mathcommand.
+%   #2 - Index tokens absorbed by mathcommand.
+%   #3 - Exponent tokens absorbed by mathcommand.
+%   #4 - Optional parenthesized conditional expression.
+%
+% Usage:
+%   \ConditionalFunctional{\P}{\mathbb{P}}
+%   \P(A | B)
+
 \NewDocumentCommand{\ConditionalFunctional}{mm}{
     \NewDocumentCommand{#1}{mmm d()}{
         \IfNoValueTF{##4}{#2##1##2##3}{#2##1##2##3\BracesSplit{##4}}
@@ -19,8 +83,30 @@
     \piefication{#1}
 }
 
-% Template for expectation-like operators (E, D, etc.)
-% Creates commands that can handle conditional arguments in brackets
+% -----------------------------------------------------------------------------
+% Internal Commands
+% -----------------------------------------------------------------------------
+%
+% \ConditionalFunctionalOperator
+%
+% Purpose:
+%   Defines a PIE-aware expectation-like operator whose optional conditional
+%   argument is written in square brackets.
+%
+% Parameters:
+%   #1 - Command to define.
+%   #2 - Printed operator head, such as \mathbb{E}.
+%
+% Generated command parameters:
+%   #1 - Prime tokens absorbed by mathcommand.
+%   #2 - Index tokens absorbed by mathcommand.
+%   #3 - Exponent tokens absorbed by mathcommand.
+%   #4 - Optional bracketed conditional expression.
+%
+% Usage:
+%   \ConditionalFunctionalOperator{\E}{\mathbb{E}}
+%   \E[X | Y]
+
 \NewDocumentCommand{\ConditionalFunctionalOperator}{mm}{
     \NewDocumentCommand{#1}{mmm d[]}{
         \IfNoValueTF{##4}{#2##1##2##3}{#2##1##2##3\BraketSplit{##4}}
@@ -28,67 +114,266 @@
     \piefication{#1}
 }
 
-% Define probability and statistical operators
-\let\P\relax  % Redefine \P to avoid conflict with paragraph symbol
-\ConditionalFunctional{\P}{\mathbb{P}}          % Probability measure
-\ConditionalFunctional{\Law}{\mathrm{Law}}      % Law of a random variable
-\ConditionalFunctionalOperator{\E}{\mathbb{E}}  % Expectation
-\ConditionalFunctionalOperator{\D}{\mathbb{D}}  % Variance (some notations)
-\ConditionalFunctionalOperator{\std}{\mathrm{std}}    % Standard deviation
-\ConditionalFunctionalOperator{\mad}{\mathrm{mad}}    % Mean absolute deviation
-\ConditionalFunctionalOperator{\Skew}{\mathrm{skew}}  % Skewness
-\ConditionalFunctionalOperator{\Kurt}{\mathrm{kurt}}  % Kurtosis
+% =============================================================================
+%                         PROBABILITY FUNCTIONALS
+% =============================================================================
 
-% Covariance operator with proper spacing
-\DeclarePairedDelimiterX\covbraces[2]{(}{)}{#1,#2} % Covariance parentheses
-\newmathcommand{\Cov}[2]{\mathrm{Cov}\covbraces{#1}{#2}} % Covariance operator
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \P
+%
+% Purpose:
+%   Typesets a probability measure with optional PIE notation and conditional
+%   parentheses.
+%
+% Usage:
+%   \P(A)
+%   \P_X(A | B)
 
-% Common probability distributions
-\newmathcommand{\Uniform}{\mathcal{U}}  % Uniform distribution
-\newmathcommand{\Normal}{\mathcal{N}}   % Normal distribution
-\newmathcommand{\Poiss}{\mathrm{Poiss}} % Poisson distribution
-\newmathcommand{\Exp}{\mathrm{Exp}}     % Exponential distribution
+\let\P\relax
+\ConditionalFunctional{\P}{\mathbb{P}}
 
-% Special terminology
-\newtextcommand{\cadlag}{c\`adl\`ag}    % French: "continue à droite, limite à gauche"
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \Law
+%
+% Purpose:
+%   Typesets the law or distribution of a random variable, with optional
+%   conditional parentheses.
+%
+% Usage:
+%   \Law(X)
+%   \Law(X | Y)
 
+\ConditionalFunctional{\Law}{\mathrm{Law}}
 
-% Example usage:
+% =============================================================================
+%                         EXPECTATION AND MOMENTS
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
 %
-% Probability measures (note PIE notation):
-%   $\P(A)$                          % Probability of event A
-%   $\P^2(A)$                        % Squared probability
-%   $\P(A | B)$                      % Conditional probability
-%   $\P_{X}(A)$                      % Probability under distribution of X
-%   $\P_{X}(A | B)$                  % Conditional probability under distribution of X
+% \E
 %
-% Expectation and moments (note PIE notation):
-%   $\E[X]$                          % Expectation of X
-%   $\E^2[X]$                        % Squared expectation
-%   $\E[X | Y}$                      % Conditional expectation
-%   $\E_{\P}[X]$                     % Expectation under measure P
-%   $\E_{\P}[X | Y]$                 % Conditional expectation under measure P
+% Purpose:
+%   Typesets expectation with optional PIE notation and conditional brackets.
 %
-% Statistical operators:
-%   $\D[X]$                          % Variance (alternative notation)
-%   $\std[X]$                        % Standard deviation
-%   $\mad[X]$                        % Mean absolute deviation
-%   $\skew[X]$                       % Skewness
-%   $\kurt[X]$                       % Kurtosis
-%   $\Cov{X}{Y}$                     % Covariance of X and Y
+% Usage:
+%   \E[X]
+%   \E_{\P}[X | Y]
+
+\ConditionalFunctionalOperator{\E}{\mathbb{E}}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
 %
-% Probability distributions:
-%   $X \sim \Uniform(a,b)$           % Uniform distribution
-%   $X \sim \Normal(\mu,\sigma^2)$   % Normal distribution
-%   $X \sim \Poiss(\lambda)$         % Poisson distribution
-%   $X \sim \Exp(\lambda)$           % Exponential distribution
+% \D
 %
-% Law and special terminology:
-%   $\Law(X)$                        % Law/distribution of X
-%   $\Law(X | Y)$                    % Conditional law of X given Y
-%   $\cadlag$                        % "càdlàg" processes (right-continuous with left limits)
+% Purpose:
+%   Typesets variance or dispersion notation using blackboard-bold D.
 %
-% Combined examples:
-%   $\E[\Cov{X}{Y} | Z]$              % Conditional expectation of covariance
-%   $\P_{X \sim \Normal(0,1)}(X > 0)$ % Probability under standard normal
-%   $\Law(X | Y = y)$                 % Conditional distribution
+% Usage:
+%   \D[X]
+
+\ConditionalFunctionalOperator{\D}{\mathbb{D}}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \std
+%
+% Purpose:
+%   Typesets standard deviation as an upright statistical operator.
+%
+% Usage:
+%   \std[X]
+
+\ConditionalFunctionalOperator{\std}{\mathrm{std}}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \mad
+%
+% Purpose:
+%   Typesets mean absolute deviation as an upright statistical operator.
+%
+% Usage:
+%   \mad[X]
+
+\ConditionalFunctionalOperator{\mad}{\mathrm{mad}}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \Skew
+%
+% Purpose:
+%   Typesets skewness as an upright statistical operator.
+%
+% Usage:
+%   \Skew[X]
+
+\ConditionalFunctionalOperator{\Skew}{\mathrm{skew}}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \Kurt
+%
+% Purpose:
+%   Typesets kurtosis as an upright statistical operator.
+%
+% Usage:
+%   \Kurt[X]
+
+\ConditionalFunctionalOperator{\Kurt}{\mathrm{kurt}}
+
+% =============================================================================
+%                                COVARIANCE
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% Internal Commands
+% -----------------------------------------------------------------------------
+%
+% \covbraces
+%
+% Purpose:
+%   Parenthesized two-argument delimiter used by \Cov.
+%
+% Parameters:
+%   #1 - First covariance argument.
+%   #2 - Second covariance argument.
+%
+% Usage:
+%   Internal use by \Cov.
+
+\DeclarePairedDelimiterX\covbraces[2]{(}{)}{#1,#2}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \Cov
+%
+% Purpose:
+%   Typesets covariance with parenthesized arguments.
+%
+% Parameters:
+%   #1 - First random variable or expression.
+%   #2 - Second random variable or expression.
+%
+% Usage:
+%   \Cov{X}{Y}
+
+\newmathcommand{\Cov}[2]{\mathrm{Cov}\covbraces{#1}{#2}}
+
+% =============================================================================
+%                               DISTRIBUTIONS
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \Uniform
+%
+% Purpose:
+%   Typesets the uniform distribution symbol.
+%
+% Usage:
+%   X \sim \Uniform(a,b)
+
+\newmathcommand{\Uniform}{\mathcal{U}}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \Normal
+%
+% Purpose:
+%   Typesets the normal distribution symbol.
+%
+% Usage:
+%   X \sim \Normal(\mu,\sigma^2)
+
+\newmathcommand{\Normal}{\mathcal{N}}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \Poiss
+%
+% Purpose:
+%   Typesets the Poisson distribution name.
+%
+% Usage:
+%   X \sim \Poiss(\lambda)
+
+\newmathcommand{\Poiss}{\mathrm{Poiss}}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \Exp
+%
+% Purpose:
+%   Typesets the exponential distribution name.
+%
+% Usage:
+%   X \sim \Exp(\lambda)
+
+\newmathcommand{\Exp}{\mathrm{Exp}}
+
+% =============================================================================
+%                            STOCHASTIC PROCESS TEXT
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \cadlag
+%
+% Purpose:
+%   Typesets the French term for right-continuous paths with left limits.
+%
+% Usage:
+%   \cadlag
+
+\newtextcommand{\cadlag}{c\`adl\`ag}
+
+% =============================================================================
+%                                USAGE NOTES
+% =============================================================================
+%
+% Probability measures:
+%   \P(A)
+%   \P(A | B)
+%   \P_X(A | B)
+%
+% Expectation and moments:
+%   \E[X]
+%   \E_{\P}[X | Y]
+%   \D[X]
+%   \std[X]
+%
+% Statistics and distributions:
+%   \Cov{X}{Y}
+%   X \sim \Normal(\mu,\sigma^2)
+%   X \sim \Uniform(a,b)

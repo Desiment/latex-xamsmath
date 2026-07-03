@@ -89,11 +89,29 @@ $\Res_{z=0}\{f(z)\}$                 % Braces
 
 \section{Plugins}
 
+Each plugin is loaded with \verb|\XAMSMathLoadPlugin{<name>}|. The examples below show the source code as it appears in a document, followed immediately by the rendered output.
+
+\begin{verbatim}
+\XAMSMathLoadPlugin{foundations}
+\XAMSMathLoadPlugin{algebra}
+\XAMSMathLoadPlugin{calculus}
+\XAMSMathLoadPlugin{combinatorics}
+\XAMSMathLoadPlugin{probability}
+\end{verbatim}
+
 \subsection{Foundations Plugin}
 
-The foundations plugin provides enhanced notation for logic, set theory, and topology.
+The foundations plugin provides notation for logic, set theory, mappings, and topology.
 
-Logic symbols include implication and equivalence with proper spacing:
+\subsubsection*{Logic}
+\begin{verbatim}
+\begin{align*}
+p \limp q &\quad\text{Implication} &
+p \liff q &\quad\text{Equivalence} \\
+\nec p &\quad\text{Necessity} &
+\poss p &\quad\text{Possibility}
+\end{align*}
+\end{verbatim}
 \begin{align*}
 p \limp q &\quad\text{Implication} &
 p \liff q &\quad\text{Equivalence} \\
@@ -101,7 +119,17 @@ p \liff q &\quad\text{Equivalence} \\
 \poss p &\quad\text{Possibility}
 \end{align*}
 
-Set theory operations benefit from automatic splitting and proper operator definitions:
+\subsubsection*{Set theory and mappings}
+\begin{verbatim}
+\begin{align*}
+\set{x | x > 0} &\quad\text{Set notation} &
+\card{A} &\quad\text{Cardinality} \\
+\powerset{X} &\quad\text{Power set} &
+A \symdiff B &\quad\text{Symmetric difference} \\
+f: X \injto Y &\quad\text{Injective function} &
+\complement{A} &\quad\text{Set complement}
+\end{align*}
+\end{verbatim}
 \begin{align*}
 \set{x | x > 0} &\quad\text{Set notation} &
 \card{A} &\quad\text{Cardinality} \\
@@ -111,7 +139,15 @@ f: X \injto Y &\quad\text{Injective function} &
 \complement{A} &\quad\text{Set complement}
 \end{align*}
 
-Topological operators provide consistent spacing and sizing:
+\subsubsection*{Topology}
+\begin{verbatim}
+\begin{align*}
+\Cl{A} &\quad\text{Closure} &
+\Int{A} &\quad\text{Interior} \\
+\Fr{A} &\quad\text{Boundary} &
+\Hom(X) &\quad\text{Homology groups}
+\end{align*}
+\end{verbatim}
 \begin{align*}
 \Cl{A} &\quad\text{Closure} &
 \Int{A} &\quad\text{Interior} \\
@@ -121,9 +157,17 @@ Topological operators provide consistent spacing and sizing:
 
 \subsection{Algebra Plugin}
 
-The algebra plugin covers complex numbers, linear algebra, and number theory with enhanced notation.
+The algebra plugin covers complex numbers, number systems, linear algebra, vectors, and number-theoretic delimiters.
 
-Complex number operations use upright fonts for real and imaginary parts:
+\subsubsection*{Complex numbers}
+\begin{verbatim}
+\begin{align*}
+\conj{z} &\quad\text{Conjugate} &
+\abs{z} &\quad\text{Modulus} \\
+\Re(z) &\quad\text{Real part} &
+\Im(z) &\quad\text{Imaginary part}
+\end{align*}
+\end{verbatim}
 \begin{align*}
 \conj{z} &\quad\text{Conjugate} &
 \abs{z} &\quad\text{Modulus} \\
@@ -131,45 +175,91 @@ Complex number operations use upright fonts for real and imaginary parts:
 \Im(z) &\quad\text{Imaginary part}
 \end{align*}
 
-Standard number systems use blackboard bold with consistent styling:
+\subsubsection*{Number systems}
+\begin{verbatim}
+\[
+\N, \Z, \Q, \R, \C, \H
+\]
+\end{verbatim}
 \[
 \N, \Z, \Q, \R, \C, \H
 \]
 
-Linear algebra operations feature proper delimiter handling and vector notation:
+\subsubsection*{Linear algebra}
+\begin{verbatim}
 \begin{align*}
 \norm{v} &\quad\text{Vector norm} &
-\norm[\Big]{Av} &\quad\text{Scaled norm} \\
+\norm[\Big]{Av} &\quad\text{Explicitly sized norm} \\
+\spr{u}{v} &\quad\text{Scalar product} &
+\cpr{u}{v} &\quad\text{Cross product} \\
+\tr(A) &\quad\text{Trace} &
+\rk(A) &\quad\text{Rank}
+\end{align*}
+\end{verbatim}
+\begin{align*}
+\norm{v} &\quad\text{Vector norm} &
+\norm[\Big]{Av} &\quad\text{Explicitly sized norm} \\
 \spr{u}{v} &\quad\text{Scalar product} &
 \cpr{u}{v} &\quad\text{Cross product} \\
 \tr(A) &\quad\text{Trace} &
 \rk(A) &\quad\text{Rank}
 \end{align*}
 
-Vector shorthand commands provide concise notation:
+\subsubsection*{Vector shorthand}
+\begin{verbatim}
 \[
-\va, \vb, \vc, \vd, \ve, \vf, \vg, \vh, \vi, \vj, \vk, \vl, \vm, \vn, \vo, \vp, \vq, \vr, \vs, \vt, \vu, \vv, \vw, \vx, \vy, \vz
+\va, \vb, \vc, \vi, \vj, \vx, \vy, \vz
+\]
+\end{verbatim}
+\[
+\va, \vb, \vc, \vi, \vj, \vx, \vy, \vz
 \]
 
-Number theory functions include proper ceiling and floor notation:
+\subsubsection*{Number theory}
+\begin{verbatim}
 \begin{align*}
-\ceil{x} &\quad\text{Ceiling function} & \floor{x} &\quad\text{Floor function} \\
-\ceil*[\Big]{\frac{x}{2}} &\quad\text{Scaled ceiling} & a \divby b &\quad\text{Divisibility}
+\ceil{x} &\quad\text{Ceiling function} &
+\floor{x} &\quad\text{Floor function} \\
+\ceil*[\Big]{\frac{x}{2}} &\quad\text{Explicitly sized ceiling} &
+a \divby b &\quad\text{Divisibility}
+\end{align*}
+\end{verbatim}
+\begin{align*}
+\ceil{x} &\quad\text{Ceiling function} &
+\floor{x} &\quad\text{Floor function} \\
+\ceil*[\Big]{\frac{x}{2}} &\quad\text{Explicitly sized ceiling} &
+a \divby b &\quad\text{Divisibility}
 \end{align*}
 
 \subsection{Calculus Plugin}
 
-The calculus plugin provides enhanced notation for differential and integral calculus with proper fraction handling.
+The calculus plugin provides derivative commands, differential symbols, interval notation, and vector-calculus operators.
 
-Derivative notation supports multiple fraction styles and evaluation points:
+\subsubsection*{Derivatives}
+\begin{verbatim}
 \begin{align*}
 \od{y}{x} &\quad\text{Ordinary derivative} &
-\od^2_{x=0}{y}{x} &\quad\text{Second derivative at point} \\
+\od^2_{x=0}{y}{x} &\quad\text{Second derivative at a point} \\
+\pd{u}{t} &\quad\text{Partial derivative} &
+\pd^2{u}{x \partial y} &\quad\text{Mixed partial derivative}
+\end{align*}
+\end{verbatim}
+\begin{align*}
+\od{y}{x} &\quad\text{Ordinary derivative} &
+\od^2_{x=0}{y}{x} &\quad\text{Second derivative at a point} \\
 \pd{u}{t} &\quad\text{Partial derivative} &
 \pd^2{u}{x \partial y} &\quad\text{Mixed partial derivative}
 \end{align*}
 
-Different fraction styles are available for various contexts:
+\subsubsection*{Derivative fraction styles}
+\begin{verbatim}
+\begin{align*}
+\lod{y}{x} &\quad\text{Small fraction derivative} &
+\tod{y}{x} &\quad\text{Text-style fraction} \\
+\lpd{u}{t} &\quad\text{Small fraction partial} &
+\tpd{u}{t} &\quad\text{Text-style partial}
+\end{align*}
+\end{verbatim}
 \begin{align*}
 \lod{y}{x} &\quad\text{Small fraction derivative} &
 \tod{y}{x} &\quad\text{Text-style fraction} \\
@@ -177,7 +267,15 @@ Different fraction styles are available for various contexts:
 \tpd{u}{t} &\quad\text{Text-style partial}
 \end{align*}
 
-Multivariable calculus operators feature proper spacing and sizing:
+\subsubsection*{Multivariable calculus}
+\begin{verbatim}
+\begin{align*}
+\grad f &\quad\text{Gradient} &
+\rot \vec{F} &\quad\text{Curl} \\
+\div \vec{F} &\quad\text{Divergence} &
+\interval{a}{b} &\quad\text{Open interval}
+\end{align*}
+\end{verbatim}
 \begin{align*}
 \grad f &\quad\text{Gradient} &
 \rot \vec{F} &\quad\text{Curl} \\
@@ -187,16 +285,31 @@ Multivariable calculus operators feature proper spacing and sizing:
 
 \subsection{Combinatorics Plugin}
 
-Combinatorial notations include binomial variants, Stirling numbers, and factorial operations with PIE support.
+The combinatorics plugin provides binomial variants, Stirling numbers, and PIE-aware falling and rising factorials.
 
-Combinatorial numbers feature proper delimiter scaling:
+\subsubsection*{Combinatorial numbers}
+\begin{verbatim}
 \begin{align*}
-\multbinom{n}{k} &\quad\text{Multiset coefficient} &
-\Stirling{n}{k} &\quad\text{Stirling numbers (2nd kind)} \\
-\stirling{n}{k} &\quad\text{Stirling numbers (1st kind)} &
+\multbinom{n}{k} &\quad\text{Multiset coefficient} \\
+\Stirling{n}{k} &\quad\text{Second-kind Stirling number} \\
+\stirling{n}{k} &\quad\text{First-kind Stirling number}
+\end{align*}
+\end{verbatim}
+\begin{align*}
+\multbinom{n}{k} &\quad\text{Multiset coefficient} \\
+\Stirling{n}{k} &\quad\text{Second-kind Stirling number} \\
+\stirling{n}{k} &\quad\text{First-kind Stirling number}
 \end{align*}
 
-Factorial operations demonstrate PIE notation in practice:
+\subsubsection*{Factorials}
+\begin{verbatim}
+\begin{align*}
+\fallf{x}^{n} &\quad\text{Falling factorial} &
+\fallf{x}_{k}^{n} &\quad\text{Falling factorial with index} \\
+\risef{x}^{n} &\quad\text{Rising factorial} &
+\risef{x}^{n}_{k} &\quad\text{Rising factorial with index}
+\end{align*}
+\end{verbatim}
 \begin{align*}
 \fallf{x}^{n} &\quad\text{Falling factorial} &
 \fallf{x}_{k}^{n} &\quad\text{Falling factorial with index} \\
@@ -206,25 +319,49 @@ Factorial operations demonstrate PIE notation in practice:
 
 \subsection{Probability Plugin}
 
-Probability and statistics operators handle conditional notation and distribution specifications with proper spacing.
+The probability plugin provides conditional probability, expectation-like operators, covariance, distributions, and statistical shorthand.
 
-Probability measures support conditional arguments and distribution specifications:
+\subsubsection*{Probability measures}
+\begin{verbatim}
 \begin{align*}
 \P(A) &\quad\text{Probability measure} &
 \P(A | B) &\quad\text{Conditional probability} \\
 \P_{X}(A) &\quad\text{Under distribution X} &
-\Law(X) &\quad\text{Law of random variable}
+\Law(X) &\quad\text{Law of a random variable}
+\end{align*}
+\end{verbatim}
+\begin{align*}
+\P(A) &\quad\text{Probability measure} &
+\P(A | B) &\quad\text{Conditional probability} \\
+\P_{X}(A) &\quad\text{Under distribution X} &
+\Law(X) &\quad\text{Law of a random variable}
 \end{align*}
 
-Expectation and moment operators feature bracket notation for conditions:
+\subsubsection*{Expectation and moments}
+\begin{verbatim}
 \begin{align*}
 \E[X] &\quad\text{Expectation} &
-  \E[X | \int Y(t)dt] &\quad\text{Conditional expectation} \\
+\E_P^2[X | Y] &\quad\text{Conditional expectation} \\
+\E_{\P}[X] &\quad\text{Under measure P} &
+\D[X] &\quad\text{Variance}
+\end{align*}
+\end{verbatim}
+\begin{align*}
+\E[X] &\quad\text{Expectation} &
+\E_P^2[X | Y] &\quad\text{Conditional expectation} \\
 \E_{\P}[X] &\quad\text{Under measure P} &
 \D[X] &\quad\text{Variance}
 \end{align*}
 
-Statistical operators provide consistent covariance and distribution notation:
+\subsubsection*{Statistics and distributions}
+\begin{verbatim}
+\begin{align*}
+\Cov{X}{Y} &\quad\text{Covariance} &
+\std[X] &\quad\text{Standard deviation} \\
+X \sim \Normal(\mu,\sigma^2) &\quad\text{Normal distribution} &
+X \sim \Uniform(a,b) &\quad\text{Uniform distribution}
+\end{align*}
+\end{verbatim}
 \begin{align*}
 \Cov{X}{Y} &\quad\text{Covariance} &
 \std[X] &\quad\text{Standard deviation} \\
@@ -234,27 +371,21 @@ X \sim \Uniform(a,b) &\quad\text{Uniform distribution}
 
 \subsection{Advanced Examples}
 
-Complex mathematical expressions demonstrate the integration of multiple xamsmath features.
+The plugins can be composed in larger expressions.
 
-Advanced calculus and analysis expressions benefit from proper operator spacing and delimiter handling:
+\begin{verbatim}
 \begin{align*}
 \od^2_{\xi=0}{y}{\xi} + \pd{u}{t} &= \grad^2 u \\
-\int_0^\infty e^{-\xi^2} \dif \xi &= \frac{\sqrt{\pi}}{2} \\
-\Res_{z=0}\left[\frac{f(z)}{z^2}\right] &= \lim_{z\to 0} \od{}{z}(z^2 f(z))
-\end{align*}
-
-Combinatorial and probability expressions showcase PIE notation and conditional operators:
-\begin{align*}
 \sum_{k=0}^n \Stirling{n}{k} \risef{\xi}^k &= \xi^n \\
 \E[\Cov{\xi}{\eta} | \zeta] &= 0 \\
-\P_{\xi \sim \Normal(0,1)}(\xi > 1.96) &\approx 0.025
+\set{f: X \bijto Y | \card{X} = \card{Y}} &\quad\text{Bijections}
 \end{align*}
-
-Set theory and functional analysis examples demonstrate automatic splitting and operator scaling:
+\end{verbatim}
 \begin{align*}
-\set{f: X \bijto Y | \card{X} = \card{Y}} &\quad\text{Bijections between finite sets} \\
-\norm{\sum_{k=1}^\infty \frac{\va_k}{k^2}} &\leq \sum_{k=1}^\infty \frac{\norm*{\va_k}}{k^2} \\
-\Cl\left(\bigcup_{n=1}^\infty A_n\right) &= \bigcup_{n=1}^\infty \Cl(A_n)
+\od^2_{\xi=0}{y}{\xi} + \pd{u}{t} &= \grad^2 u \\
+\sum_{k=0}^n \Stirling{n}{k} \risef{\xi}^k &= \xi^n \\
+\E[\Cov{\xi}{\eta} | \zeta] &= 0 \\
+\set{f: X \bijto Y | \card{X} = \card{Y}} &\quad\text{Bijections}
 \end{align*}
 
 \section{Package Configuration}
@@ -262,15 +393,14 @@ Set theory and functional analysis examples demonstrate automatic splitting and 
 xamsmath supports several options to enable specific features:
 
 \begin{verbatim}
-\usepackage[fonts]{\xamsmath}           % Additional math fonts
-\usepackage[symbols]{\xamsmath}         % Extra mathematical symbols  
-\usepackage[operators]{\xamsmath}       % Additional math operators
-\usepackage[braces]{\xamsmath}          % Improved brace handling
-\usepackage[scaling]{\xamsmath}         % Scalable operator symbols
-\usepackage[eqmicrotype]{\xamsmath}     % Microtypography enhancements
-\usepackage[all]{\xamsmath}             % Enable all features
+\usepackage[fonts]{xamsmath}
+\usepackage[symbols]{xamsmath}
+\usepackage[operators]{xamsmath}
+\usepackage[braces]{xamsmath}
+\usepackage[eqmicrotype]{xamsmath}
+\usepackage[all]{xamsmath}
 \end{verbatim}
 
-The brace handling option swaps the behavior of starred and unstarred commands in paired delimiters, making unstarred commands use auto-scaling by default. The scaling option enables starred versions of large operators that scale to match their content.
+The brace handling option swaps the behavior of starred and unstarred commands in paired delimiters, making unstarred commands use auto-scaling by default.
 
 \end{document}

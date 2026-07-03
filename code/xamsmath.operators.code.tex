@@ -1,0 +1,70 @@
+% =============================================================================
+%                             OPERATOR EXTENSIONS
+% =============================================================================
+%
+% Common math operators and constants loaded by the operators package option.
+
+% =============================================================================
+%                               CORE OPERATORS
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% Projection And Optimization Operators
+% -----------------------------------------------------------------------------
+%
+% \Proj
+%
+% Purpose:
+%   Typesets the projection operator.
+%
+% Usage:
+%   \Proj(x)
+%
+% \argmax and \argmin
+%
+% Purpose:
+%   Typeset optimization operators with limit placement in display math.
+%
+% Usage:
+%   \argmax_{x \in X} f(x)
+%   \argmin_{x \in X} f(x)
+
+\let\Proj\relax
+
+% The braces option upgrades operators to the braced-operator interface.
+\if@xamsmath@braces
+  \DeclareBracedMathOperator{\Proj}{Proj}
+  \DeclareBracedMathOperator*{\argmax}{argmax}
+  \DeclareBracedMathOperator*{\argmin}{argmin}
+\else
+  \DeclareMathOperator{\Proj}{Proj}
+  \DeclareMathOperator*{\argmax}{argmax}
+  \DeclareMathOperator*{\argmin}{argmin}
+\fi
+
+% =============================================================================
+%                              LOCAL CONSTANTS
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \loc
+%
+% Purpose:
+%   Typesets the common local qualifier in upright roman math text.
+%
+% Usage:
+%   L^2_\loc
+%
+% \const
+%
+% Purpose:
+%   Typesets a generic constant marker in upright roman math text.
+%
+% Usage:
+%   C = \const
+
+\newmathcommand{\loc}{\mathrm{loc}}
+\newmathcommand{\const}{\mathrm{const}}

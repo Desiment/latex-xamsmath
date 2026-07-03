@@ -1,89 +1,403 @@
-% calculus.tex - xamsmath Calculus Plugin
-% Differential calculus, integrals, derivatives, and multivariable calculus
-% Requires xamsmath package
+% =============================================================================
+%                              CALCULUS PLUGIN
+% =============================================================================
+%
+% Differential calculus, integral notation, derivative fractions, and vector
+% calculus operators.
+%
+% Requires:
+%   xamsmath core helpers. The braces and eqmicrotype options are optional
+%   because this plugin provides fallbacks for their public helpers.
 
-%%%%
-%% Calculus
-%%%%
+% =============================================================================
+%                              FALLBACK SUPPORT
+% =============================================================================
 
-% Provide fallback for \DeclareBracedMathOperator if braces option is disabled
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \DeclareBracedMathOperator
+%
+% Purpose:
+%   Provides ordinary AMS operator declarations when the braces module has not
+%   already supplied the richer braced-operator implementation.
+%
+% Parameters:
+%   *  - Optional star requests limit-style operator placement.
+%   #1 - Operator command to define.
+%   #2 - Operator text to display.
+%
+% Usage:
+%   \DeclareBracedMathOperator{\grad}{grad}
+
 \ProvideDocumentCommand{\DeclareBracedMathOperator}{smm}{
   \IfBooleanTF{#1}{\DeclareMathOperator*{#2}{#3}}{\DeclareMathOperator{#2}{#3}}
 }
 
-% Provide fallback for \sfrac if xfrac package is not loaded
-\ProvideDocumentCommand{\sfrac}{mm}{\frac{#1}{#2}} % Fallback to regular fraction
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \sfrac
+%
+% Purpose:
+%   Provides a regular-fraction fallback when xfrac was not loaded by the
+%   eqmicrotype option.
+%
+% Parameters:
+%   #1 - Numerator.
+%   #2 - Denominator.
+%
+% Usage:
+%   \sfrac{dy}{dx}
 
-%%%% Common calculus notations
-\DeclarePairedDelimiterX\interval[2]{\langle}{\rangle}{#1;#2} % Interval notation
-\DeclareMathOperator{\sign}{sign}   % Signum function
-\DeclareMathOperator{\supp}{supp}   % Function support
-\newmathcommand{\dif}{\mathop{}\!d} % Small differential (for integrals)
-\newmathcommand{\Dif}{\mathop{}\!D} % Big differential (for derivatives)
+\ProvideDocumentCommand{\sfrac}{mm}{\frac{#1}{#2}}
 
-%%%% Derivative fractions
-% Advanced derivative notation with automatic fraction handling
-% Provides: \od, \lod, \tod, \dod for ordinary derivatives
-%          \pd, \lpd, \tpd, \dpd for partial derivatives
+% =============================================================================
+%                          COMMON CALCULUS NOTATION
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \interval
+%
+% Purpose:
+%   Declares angle-bracket interval notation separated by a semicolon.
+%
+% Parameters:
+%   #1 - Left endpoint.
+%   #2 - Right endpoint.
+%
+% Usage:
+%   \interval{a}{b}
+
+\DeclarePairedDelimiterX\interval[2]{\langle}{\rangle}{#1;#2}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \sign
+%
+% Purpose:
+%   Typesets the signum operator.
+%
+% Usage:
+%   \sign(x)
+
+\DeclareMathOperator{\sign}{sign}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \supp
+%
+% Purpose:
+%   Typesets the support operator.
+%
+% Usage:
+%   \supp(f)
+
+\DeclareMathOperator{\supp}{supp}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \dif
+%
+% Purpose:
+%   Typesets a small upright differential symbol with integral spacing.
+%
+% Usage:
+%   \int f(x) \dif x
+
+\newmathcommand{\dif}{\mathop{}\!d}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \Dif
+%
+% Purpose:
+%   Typesets an uppercase differential operator for derivative notation.
+%
+% Usage:
+%   \Dif f
+
+\newmathcommand{\Dif}{\mathop{}\!D}
+
+% =============================================================================
+%                            DERIVATIVE TEMPLATE
+% =============================================================================
+
 \ExplSyntaxOn
-% Generic template for derivative fractions
-% Usage: \tmpl_derivative_frac<differential_symbol, fraction_command>{prime}{numerator}{denominator}
+
+% -----------------------------------------------------------------------------
+% Internal Templates
+% -----------------------------------------------------------------------------
+%
+% \tmpl_derivative_frac
+%
+% Purpose:
+%   Renders PIE-aware derivative fractions with configurable differential symbol
+%   and fraction command.
+%
+% Template parameters:
+%   #1 - Differential symbol, such as \dif or \partial.
+%   #2 - Fraction command, such as \frac, \sfrac, \tfrac, or \dfrac.
+%
+% Runtime parameters:
+%   #3 - Prime tokens absorbed by mathcommand. Must be empty for derivatives.
+%   #4 - Index tokens absorbed by mathcommand. Used as an evaluation suffix.
+%   #5 - Exponent tokens absorbed by mathcommand. Used as derivative order.
+%   #6 - Numerator expression.
+%   #7 - Denominator variable or expression.
+%
+% Usage:
+%   Internal template for \od, \pd, and their fraction-style variants.
+
 \NewTemplateCommand\tmpl_derivative_frac<mm>{mmm mm}{
-    \IfEmptyTF{#3}{% Check if prime argument is empty
-        \mleft.#2{#1#5#6}{#1#7#5}\IfEmptyTF{#4}{\mright.}{\mright|}#4% No prime: regular derivative fraction
+    \IfEmptyTF{#3}{
+        \mleft.#2{#1#5#6}{#1#7#5}\IfEmptyTF{#4}{\mright.}{\mright|}#4
     }{
-        \PackageError{xamsmath}{Primes~are~not~allowed~to~be~before~\verb|od|-like~commands}{}% Error for invalid usage
+        \PackageError{xamsmath}{Primes~are~not~allowed~to~be~before~\verb|od|-like~commands}{}
     }
 }
 
-% Ordinary derivatives with different fraction styles
-\TemplateInstancePIE\od\tmpl_derivative_frac<\dif, \frac>    % Regular fraction
-\TemplateInstancePIE\lod\tmpl_derivative_frac<\dif, \sfrac>  % Small fraction (requires xfrac)
-\TemplateInstancePIE\tod\tmpl_derivative_frac<\dif, \tfrac>  % Text-style fraction  
-\TemplateInstancePIE\dod\tmpl_derivative_frac<\dif, \dfrac>  % Display-style fraction
+% =============================================================================
+%                         ORDINARY DERIVATIVES
+% =============================================================================
 
-% Partial derivatives with different fraction styles
-\TemplateInstancePIE\pd\tmpl_derivative_frac<\partial, \frac>    % Regular fraction
-\TemplateInstancePIE\lpd\tmpl_derivative_frac<\partial, \sfrac>  % Small fraction (requires xfrac)
-\TemplateInstancePIE\tpd\tmpl_derivative_frac<\partial, \tfrac>  % Text-style fraction
-\TemplateInstancePIE\dpd\tmpl_derivative_frac<\partial, \dfrac>  % Display-style fraction
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \od
+%
+% Purpose:
+%   Typesets an ordinary derivative using \frac.
+%
+% Parameters:
+%   #1 - Numerator expression.
+%   #2 - Denominator variable.
+%
+% PIE usage:
+%   Superscripts specify derivative order. Subscripts specify evaluation points.
+%
+% Usage:
+%   \od{y}{x}
+%   \od^2_{x=0}{y}{x}
+
+\TemplateInstancePIE\od\tmpl_derivative_frac<\dif, \frac>
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \lod
+%
+% Purpose:
+%   Typesets an ordinary derivative using \sfrac.
+%
+% Parameters:
+%   #1 - Numerator expression.
+%   #2 - Denominator variable.
+%
+% Usage:
+%   \lod{y}{x}
+
+\TemplateInstancePIE\lod\tmpl_derivative_frac<\dif, \sfrac>
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \tod
+%
+% Purpose:
+%   Typesets an ordinary derivative using \tfrac.
+%
+% Parameters:
+%   #1 - Numerator expression.
+%   #2 - Denominator variable.
+%
+% Usage:
+%   \tod{y}{x}
+
+\TemplateInstancePIE\tod\tmpl_derivative_frac<\dif, \tfrac>
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \dod
+%
+% Purpose:
+%   Typesets an ordinary derivative using \dfrac.
+%
+% Parameters:
+%   #1 - Numerator expression.
+%   #2 - Denominator variable.
+%
+% Usage:
+%   \dod{y}{x}
+
+\TemplateInstancePIE\dod\tmpl_derivative_frac<\dif, \dfrac>
+
+% =============================================================================
+%                          PARTIAL DERIVATIVES
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \pd
+%
+% Purpose:
+%   Typesets a partial derivative using \frac.
+%
+% Parameters:
+%   #1 - Numerator expression.
+%   #2 - Denominator variable or mixed-partial expression.
+%
+% Usage:
+%   \pd{u}{t}
+%   \pd^2{u}{x \partial y}
+
+\TemplateInstancePIE\pd\tmpl_derivative_frac<\partial, \frac>
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \lpd
+%
+% Purpose:
+%   Typesets a partial derivative using \sfrac.
+%
+% Parameters:
+%   #1 - Numerator expression.
+%   #2 - Denominator variable or mixed-partial expression.
+%
+% Usage:
+%   \lpd{u}{t}
+
+\TemplateInstancePIE\lpd\tmpl_derivative_frac<\partial, \sfrac>
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \tpd
+%
+% Purpose:
+%   Typesets a partial derivative using \tfrac.
+%
+% Parameters:
+%   #1 - Numerator expression.
+%   #2 - Denominator variable or mixed-partial expression.
+%
+% Usage:
+%   \tpd{u}{t}
+
+\TemplateInstancePIE\tpd\tmpl_derivative_frac<\partial, \tfrac>
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \dpd
+%
+% Purpose:
+%   Typesets a partial derivative using \dfrac.
+%
+% Parameters:
+%   #1 - Numerator expression.
+%   #2 - Denominator variable or mixed-partial expression.
+%
+% Usage:
+%   \dpd{u}{t}
+
+\TemplateInstancePIE\dpd\tmpl_derivative_frac<\partial, \dfrac>
+
 \ExplSyntaxOff
 
-%%%% Multivariable calculus operators
-% Redefine div to avoid conflict with division symbol
+% =============================================================================
+%                       MULTIVARIABLE CALCULUS OPERATORS
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \grad
+%
+% Purpose:
+%   Typesets the gradient operator.
+%
+% Usage:
+%   \grad f
+%   \grad(f)
+
+\DeclareBracedMathOperator{\grad}{grad}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \rot
+%
+% Purpose:
+%   Typesets the rotation or curl operator.
+%
+% Usage:
+%   \rot \vec{F}
+
+\DeclareBracedMathOperator{\rot}{rot}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \div
+%
+% Purpose:
+%   Typesets the divergence operator, replacing TeX's division symbol command.
+%
+% Usage:
+%   \div \vec{F}
+
 \let\div\relax
-\DeclareBracedMathOperator{\grad}{grad}  % Gradient
-\DeclareBracedMathOperator{\rot}{rot}    % Rotation (curl)
-\DeclareBracedMathOperator{\div}{div}    % Divergence
+\DeclareBracedMathOperator{\div}{div}
 
-
-% Example usage:
+% =============================================================================
+%                                USAGE NOTES
+% =============================================================================
 %
-% Common notations:
-%   $\interval{a}{b}$               % Open interval
-%   $\sign(x), \supp(f)$            % Signum and support
-%   $\int f(x) \dif x$              % Differential in integrals
+% Common notation:
+%   \interval{a}{b}
+%   \sign(x)
+%   \supp(f)
+%   \int f(x) \dif x
 %
-% Ordinary derivatives (note PIE notation):
-%   $\od{y}{x}$                     % dy/dx
-%   $\od^2{y}{x}$                   % d²y/dx² (second derivative)
-%   $\od^n{y}{x}$                   % dⁿy/dxⁿ (n-th derivative)
-%   $\od_{x=0}{y}{x}$               % dy/dx evaluated at x=0
-%   $\od^2_{x=0}{y}{x}$             % d²y/dx² evaluated at x=0
+% Ordinary derivatives:
+%   \od{y}{x}
+%   \od^2_{x=0}{y}{x}
+%   \lod{y}{x}
 %
-% Partial derivatives (note PIE notation):
-%   $\pd{u}{t}$                     % ∂u/∂t
-%   $\pd^2{u}{x^2}$                 % ∂²u/∂x²
-%   $\pd^2{u}{x \partial y}$        % ∂²u/∂x∂y
-%   $\pd_{t=0}{u}{t}$               % ∂u/∂t evaluated at t=0
-%
-% Fraction style variants:
-%   $\lod{y}{x}$                    % dy/dx (small fraction) 
-%   $\tod{y}{x}$                    % dy/dx (text-style fraction)
-%   $\lpd{u}{t}$                    % ∂u/∂t (small fraction)
-%   $\tpd{u}{t}$                    % ∂u/∂t (text-style fraction)
+% Partial derivatives:
+%   \pd{u}{t}
+%   \pd^2{u}{x \partial y}
+%   \tpd{u}{t}
 %
 % Multivariable calculus:
-%   $\grad f$                       % Gradient of f
-%   $\rot \vec{F}$                  % Curl of vector field F  
-%   $\div \vec{F}$                  % Divergence of vector field F
+%   \grad f
+%   \rot \vec{F}
+%   \div \vec{F}

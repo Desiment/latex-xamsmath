@@ -1,485 +1,195 @@
-% xamsmath.sty - Enhanced AMSMath with LaTeX3 features
-% Provides extended mathematical typesetting capabilities
-% while maintaining compatibility with standard amsmath package.
-% Version: alpha-0.1
+% =============================================================================
+%                              XAMSMATH PACKAGE
+% =============================================================================
+%
+% Enhanced AMSMath package entry point.
+%
+% This file declares package metadata, loads required dependencies, registers
+% feature options, conditionally loads implementation modules, and exposes the
+% public plugin loader used by documents.
+
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{xamsmath}[2026/01/01 alpha-0.1 Enhanced AMSMath with LaTeX3 features]
 
-% AMS core packages - essential for mathematical typesetting
-\RequirePackage{amsmath}    % Main AMS math package
-\RequirePackage{amsfonts}   % AMS fonts (e.g., blackboard bold, fraktur)
-\RequirePackage{amssymb}    % AMS symbols
+% =============================================================================
+%                                DEPENDENCIES
+% =============================================================================
+%
+% Base mathematical packages required by every xamsmath configuration.
+%
+% amsmath, amsfonts, and amssymb provide the baseline AMS math interface.
+% mathcommand supplies Prime/Index/Exponent parsing used throughout plugins.
+% extarrows, mathtools, centernot, stackrel, and kvoptions provide symbols,
+% delimiter helpers, negated relations, stacked annotations, and package option
+% processing.
 
-% Standard AMS extensions
-\RequirePackage{mathcommand} % Enhanced math command definitions
-\RequirePackage{extarrows}   % Extended arrow symbols
-\RequirePackage{mathtools}   % AMSmath enhancements
-\RequirePackage{centernot}   % Centred "not" macros
-\RequirePackage{stackrel}      % Stacking relations
+\RequirePackage{amsmath}
+\RequirePackage{amsfonts}
+\RequirePackage{amssymb}
+\RequirePackage{mathcommand}
+\RequirePackage{extarrows}
+\RequirePackage{mathtools}
+\RequirePackage{centernot}
+\RequirePackage{stackrel}
+\RequirePackage{kvoptions}
 
-% Package option flags - control which features are enabled
-\newif\if@xamsmath@more@fonts           % Additional math fonts
-\newif\if@xamsmath@more@symbols         % Extra mathematical symbols
-\newif\if@xamsmath@more@operators       % Additional math operators
-\newif\if@xamsmath@operators@braces     % Improved brace handling
-\newif\if@xamsmath@equations@microtype  % Microtypography enhancements
-% TODO: fix problems in sccaling
-%\newif\if@xamsmath@operators@scaling    % Scalable operator symbols
-%\@xamsmath@operators@scalingfalse
+% =============================================================================
+%                                CORE HELPERS
+% =============================================================================
+%
+% Core command templates are loaded unconditionally because later modules and
+% plugins rely on \piefication, \DeclarePairedSplitDelimiter, and template
+% instance helpers.
 
-% Initialize all options to false by default
-\@xamsmath@more@fontsfalse
-\@xamsmath@more@symbolsfalse
-\@xamsmath@more@operatorsfalse
-\@xamsmath@operators@bracesfalse
-\@xamsmath@equations@microtypefalse
+\input{code/xamsmath.core.code.tex}
 
-% Process package options
-% Usage: \usepackage[fonts,operators,braces]{xamsmath}
-\DeclareOption{fonts}{\@xamsmath@more@fontstrue}                    % Enable additional fonts
-\DeclareOption{symbols}{\@xamsmath@more@symbolstrue}                % Enable extra symbols
-\DeclareOption{operators}{\@xamsmath@more@operatorstrue}            % Enable additional operators
-\DeclareOption{braces}{\@xamsmath@operators@bracestrue}             % Enable improved brace handling
-\DeclareOption{eqmicrotype}{\@xamsmath@equations@microtypetrue}     % Enable equation microtypography
-%\DeclareOption{scaling}{\@xamsmath@operators@scalingtrue}           % Enable operator scaling
-\DeclareOption{all}{% Enable all features
-  \@xamsmath@more@fontstrue%
-  \@xamsmath@more@symbolstrue%
-  \@xamsmath@more@operatorstrue%
-  \@xamsmath@operators@bracestrue%
-  \@xamsmath@equations@microtypetrue%
-  %\@xamsmath@operators@scalingtrue%
+% =============================================================================
+%                              PACKAGE OPTIONS
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% Keyval Family
+% -----------------------------------------------------------------------------
+%
+% Configure kvoptions to store xamsmath option flags as internal booleans using
+% the \@xamsmath@... naming convention.
+
+\SetupKeyvalOptions{family=xamsmath,prefix=@xamsmath@}
+
+% -----------------------------------------------------------------------------
+% Feature Flags
+% -----------------------------------------------------------------------------
+%
+% fonts: enables additional math alphabets and font dependencies.
+% symbols: reserves a module for extra symbol definitions.
+% operators: enables common additional math operators.
+% braces: enables braced operators and autoscaling delimiter behavior.
+% eqmicrotype: enables equation-level microtypographic helpers.
+
+\DeclareBoolOption[false]{fonts}
+\DeclareBoolOption[false]{symbols}
+\DeclareBoolOption[false]{operators}
+\DeclareBoolOption[false]{braces}
+\DeclareBoolOption[false]{eqmicrotype}
+
+% -----------------------------------------------------------------------------
+% Aggregate Option
+% -----------------------------------------------------------------------------
+%
+% Purpose:
+%   Enables every optional built-in module with a single package option.
+%
+% Parameter:
+%   #1 - Optional key value accepted by kvoptions. The value is ignored because
+%        requesting all always turns every feature flag on.
+%
+% Usage:
+%   \usepackage[all]{xamsmath}
+
+\define@key{xamsmath}{all}[true]{
+  \@xamsmath@fontstrue
+  \@xamsmath@symbolstrue
+  \@xamsmath@operatorstrue
+  \@xamsmath@bracestrue
+  \@xamsmath@eqmicrotypetrue
 }
-\ProcessOptions\relax
 
-%%% General LaTeX3 extensions
+% -----------------------------------------------------------------------------
+% Option Processing
+% -----------------------------------------------------------------------------
+%
+% Evaluate user-provided package options before conditional module loading.
+
+\ProcessKeyvalOptions{xamsmath}
+
+% =============================================================================
+%                                MODULE LOADING
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% Fonts Module
+% -----------------------------------------------------------------------------
+%
+% The fonts option loads font packages before defining xamsmath math alphabets.
+
+\if@xamsmath@fonts
+  \RequirePackage{upgreek}
+  \RequirePackage[mathscr]{eucal}
+  \input{code/xamsmath.fonts.code.tex}
+\fi
+
+% -----------------------------------------------------------------------------
+% Symbols Module
+% -----------------------------------------------------------------------------
+%
+% The symbols option loads the symbol extension module when requested.
+
+\if@xamsmath@symbols
+  \input{code/xamsmath.symbols.code.tex}
+\fi
+
+% -----------------------------------------------------------------------------
+% Braces Module
+% -----------------------------------------------------------------------------
+%
+% The braces option requires mleftright before redefining paired delimiters and
+% declaring braced math operators.
+
+\if@xamsmath@braces
+  \RequirePackage{mleftright}
+  \input{code/xamsmath.braces.code.tex}
+\fi
+
+% -----------------------------------------------------------------------------
+% Equation Microtype Module
+% -----------------------------------------------------------------------------
+%
+% The eqmicrotype option requires xfrac for small derivative fractions and then
+% loads cramped-style and compact symbol helpers.
+
+\if@xamsmath@eqmicrotype
+  \RequirePackage{xfrac}
+  \input{code/xamsmath.eqmicrotype.code.tex}
+\fi
+
+% -----------------------------------------------------------------------------
+% Operators Module
+% -----------------------------------------------------------------------------
+%
+% The operators option loads common operators after braces so it can choose the
+% braced-operator implementation when both options are enabled.
+
+\if@xamsmath@operators
+  \input{code/xamsmath.operators.code.tex}
+\fi
+
+% =============================================================================
+%                                PLUGIN LOADER
+% =============================================================================
 
 \ExplSyntaxOn
 
-% \piefication{<command>}
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
 %
-% Enhances a command to properly handle Prime, Index, Exponent (PIE) notation
-% before processing regular arguments. This allows mathematical notation like
-% \macro^2_n{x} to be parsed correctly. In the spirit of mathcommand package,
-% for more details refer to mathcommand documentation.
+% \XAMSMathLoadPlugin
 %
-% Commands that will be PIE-fied must absorb firstly three arguments, that
-% correspond to prime, index, exponent. Note that exponent and index are
-% in the form _... and ^...
+% Purpose:
+%   Loads an optional plugin file from the plugins directory.
 %
-% Example:
-%   \NewDocumentCommand{\myfunc}{mmmm}{f#1#2#3{#4}}  % Note: PIE args come first!
-%   \piefication{\myfunc}
-%   Then:
-%     $\myfunc_n^2'{x}$  will expand to $f_n^2'(x)$
-\NewDocumentCommand{\piefication}{m}{
-    \exp_args:Nc \NewCommandCopy {old_\cs_to_str:N #1} {#1}
-    \cs_set:cpn {internal_\cs_to_str:N #1:w} {
-        \exp_args:Nc \__mathcommand_absorb_PIE:nw {old_\cs_to_str:N #1}
-    }
-    \exp_args:Nnc \RenewCommandCopy {#1} {internal_\cs_to_str:N #1:w}
-}
+% Parameters:
+%   #1 - Plugin name without the xamsmath.plugin. prefix and .tex suffix.
+%
+% Usage:
+%   \XAMSMathLoadPlugin{algebra}
+%   \XAMSMathLoadPlugin{probability}
 
-% \DeclarePairedSplitDelimiter{<cmd>}{<left delim>}{<right delim>}
-%
-% Creates a paired delimiter command that can automatically split at | characters
-% and align the vertical bar. This is useful for set notation and conditional
-% probability.
-%
-% Example:
-%   \DeclarePairedSplitDelimiter{\set}{\{}{\}}
-%   Then:
-%     \set{x | x > 0}                  % Automatic splitting at |
-%     \set{x | \frac{x}{2} > 0}        % Disable auto-scaling delimiters
-%
-% WARNING: Do not use literal | inside the content when there's already a |
-% used for splitting. Use \lvert and \rvert instead.
-% BAD:  \set{x \in \R | |x| > 1}        % Will fail!
-% GOOD: \set{x \in \R | \abs{x} > 1}    % Use absolute value command
-
-\NewDocumentCommand{\DeclarePairedSplitDelimiter}{mmm}{
-    %% Firstly we define internal variants in case when there is split, and when there is none
-    \exp_args:Nc\DeclarePairedDelimiter{internal_base_\cs_to_str:N#1}{#2}{#3}
-    \exp_args:Nc\DeclarePairedDelimiterX{internal_split_\cs_to_str:N#1}[2]{#2}{#3}
-    {##1 \nonscript\:\delimsize\vert\allowbreak\nonscript\:\mathopen{} ##2}
-    %% Now we create internal version of command
-    \exp_args:Nc\NewDocumentCommand{internal_\cs_to_str:N#1}{somm}{
-        \IfNoValueTF{##2}{
-			\IfNoValueTF{##4}{
-			  \IfBooleanTF{##1}{
-                \use:c{internal_base_\cs_to_str:N#1}{##3}
-			  }{
-                \use:c{internal_base_\cs_to_str:N#1}*{##3}
-			  }
-            }{
-			  \IfBooleanTF{##1}{
-                \use:c{internal_split_\cs_to_str:N#1}*{##3}{##4}
-			  }{
-                \use:c{internal_split_\cs_to_str:N#1}{##3}{##4}
-			  }
-            }
-        }{
-            \IfNoValueTF{##3}{
-                \use:c{internal_base_\cs_to_str:N#1}*[##2]{##3}
-            }{
-	            \use:c{internal_split_\cs_to_str:N#1}*[##2]{##3}{##4}
-            }
-        }
-    }
-    %% Finaly, create latex2e interface
-    \NewDocumentCommand{#1}{so >{\SplitArgument{1}{|} } m}{
-        \IfNoValueTF{##2}{
-		  \IfBooleanTF{##1}{
-			\use:c{internal_\cs_to_str:N#1}*##3
-		  }{
-			\use:c{internal_\cs_to_str:N#1}##3
-		  }
-        }{
-            \use:c{internal_\cs_to_str:N#1}[##2]##3
-        }
-    }
-}
-
-% Template command system for creating reusable command patterns
-%
-% \NewTemplateCommand{<cmd>}<template args>{<regular args>}{<definition>}
-% \TemplateInstance{<new cmd>}<comma-separated template values>
-% \TemplateInstancePIE{<new cmd>}<comma-separated template values>
-%
-% Example:
-%   \NewTemplateCommand\tmpl_frac<mm>{}{\frac{#1}{#2}}
-%   \TemplateInstance{\myfrac}{\tmpl_frac}<a,b>  % Defines \myfrac as \frac{a}{b}
-%   Then: $\myfrac$ produces a/b fraction
-\NewDocumentCommand{\NewTemplateCommand}{m r<> m m}{
-    \NewDocumentCommand{#1}{#2#3}{#4}
-}
-\NewDocumentCommand{\TemplateInstance}{m m >{\SplitList {,}} r<>}{
-    \NewDocumentCommand{#1}{}{#2#3}
-}
-\NewDocumentCommand{\TemplateInstancePIE}{m m >{\SplitList {,}} r<>}{
-    \NewDocumentCommand{#1}{}{#2#3}
-    \piefication{#1}  % Also apply PIE-fication
-}
+\NewDocumentCommand{\XAMSMathLoadPlugin}{m}
+  {
+    \input{plugins/xamsmath.plugin.#1.tex}
+  }
 
 \ExplSyntaxOff
 
-% Option: Additional fonts
-% Provides upright Greek letters and enhanced calligraphic fonts
-\if@xamsmath@more@fonts
-  \RequirePackage{upgreek}                    % Upright Greek letters (e.g., \upalpha, \Upomega)
-  \RequirePackage[mathscr]{eucal}             % Euler script fonts
-
-  % Enhanced double-struck numerals for better consistency
-  % Based on solutions from:
-  % https://tex.stackexchange.com/questions/204998/double-struck-zero-and-one
-  % https://tex.stackexchange.com/questions/215822/use-both-boondox-ds-and-the-blackboard-fonts-from-amsfonts
-  \DeclareMathAlphabet{\mathbx}{U}{BOONDOX-ds}{m}{n}
-
-  % Example usage:
-  %   $\upalpha, \upbeta, \Upgamma$  % Upright Greek
-  %   $\mathscr{ABC}$                % Euler script
-  %   $\mathbx{01}$                  % Consistent double-struck 0 and 1
-\fi
-
-% Option: Additional symbols (in development)
-% TODO: add import useful symbols from MnSymbol package
-\if@xamsmath@more@symbols
-  % Implementation notes for MnSymbol integration:
-  % MnSymbol provides many useful mathematical symbols not available in standard packages
-  % Font tables to examine: MnSymbolA12 through MnSymbolF12
-
-  % Template code for importing MnSymbol (commented out for now):
-  %\def\ImportFromMnSymbol#1{%
-  %  \DeclareFontFamily{U} {MnSymbol#1}{}
-  %  \DeclareFontShape{U}{MnSymbol#1}{m}{n}{
-  %   <-6> MnSymbol#15
-  %   <6-7> MnSymbol#16
-  %   <7-8> MnSymbol#17
-  %   <8-9> MnSymbol#18
-  %   <9-10> MnSymbol#19
-  %   <10-12> MnSymbol#110
-  %   <12-> MnSymbol#112}{}
-  %  \DeclareFontShape{U}{MnSymbol#1}{b}{n}{
-  %   <-6> MnSymbol#1-Bold5
-  %   <6-7> MnSymbol#1-Bold6
-  %   <7-8> MnSymbol#1-Bold7
-  %   <8-9> MnSymbol#1-Bold8
-  %   <9-10> MnSymbol#1-Bold9
-  %   <10-12> MnSymbol#1-Bold10
-  %   <12-> MnSymbol#1-Bold12}{}
-  %  \DeclareSymbolFont{MnSy#1} {U} {MnSymbol#1}{m}{n}
-  %}
-  %\newcommand\DeclareMnSymbol[4]{\DeclareMathSymbol{#1}{#2}{MnSy#3}{#4}}
-\fi
-
-% Option: Improved brace handling
-% Swaps mathtools behavior so non-starred commands use auto-scaling
-% and starred commands use fixed sizing
-\if@xamsmath@operators@braces
-  \RequirePackage{mleftright}  % Better spacing for left/right commands
-
-  % Improved left/right commands with better spacing
-  \newmathcommand{\leftoperatorbrace}{\mlparen(}
-  \newmathcommand{\rightoperatorbrace}{\mrparen)}
-  \newmathcommand{\leftoperatorbracket}{\mlbrack[}
-  \newmathcommand{\rightoperatorbracket}{\mrbrack]}
-  
-
-  % Helper macro to swap if-branches
-  \newcommand\swapifbranches[3]{#1{#3}{#2}}
-  % Patch mathtools to swap starred/unstarred behavior
-  \MHInternalSyntaxOn
-  \patchcmd{\DeclarePairedDelimiter}{\@ifstar}{\swapifbranches\@ifstar}{}{}
-  \patchcmd{\DeclarePairedDelimiterXPP}{\@ifstar}{\swapifbranches\@ifstar}{}{}
-  \MHInternalSyntaxOff
-
-  % Example usage after enabling this option:
-  %   \DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
-  %   $\norm{x}$          % Auto-scaling (was fixed size)
-  %   $\norm*{x}$         % Fixed size (was auto-scaling)
-
-  \ExplSyntaxOn
-
-  % \DeclareBracedMathOperator - Enhanced math operators with brace support
-  %
-  % Creates mathematical operators that can automatically handle various brace types
-  % with proper spacing and scaling. Supports square brackets [], parentheses (),
-  % and curly braces {} with automatic sizing.
-  %
-  % Usage:
-  %   \DeclareBracedMathOperator{\cmd}{operator_name}
-  %   \DeclareBracedMathOperator*{\cmd}{operator_name}  % for limits operators
-  %
-  % Example:
-  %   \DeclareBracedMathOperator*{\Res}{Res}
-  %   Then:
-  %     $\Res_{z=0}[\int f(z)]$          % Square brackets with auto scaling
-  %     $\Res_{z=0}*(\int  f(z))$        % Parentheses, no scaling
-  %     $\Res_{z=0}{\int f(z)}$          % Braces, with auto scaling
-  \NewTemplateCommand\tmpl_braced_math_operator<sm>{mmmsd[]d()g}{
-    % Choose appropriate variant of operatorname command
-    \IfBooleanTF{#1}{
-      \cs_set:cpn {internal_operator_name:n} ##1 {\operatorname*{##1}}
-    }{
-      \cs_set:cpn {internal_operator_name:n} ##1 {\operatorname{##1}}
-    }
-
-	% Choose appropriate variant of braces (with or without scaling)
-	\IfBooleanTF{#6}{
-	  \cs_set:cpn {internal_l_brace_var:n} ##1 {##1}
-	  \cs_set:cpn {internal_r_brace_var:n} ##1 {##1}
-	}{
-	  \cs_set:cpn {internal_l_brace_var:n} ##1 {\mleft##1}
-	  \cs_set:cpn {internal_r_brace_var:n} ##1 {\mright##1}
-	}
-
-    % Handle operator arg. Note that we only stretch first braces
-    \IfNoValueTF{#7}{%
-      \IfNoValueTF{#8}{%
-        \IfNoValueTF{#9}{%
-          \internal_operator_name:n {#2} #3 #4 #5%
-        }{%
-		  \internal_operator_name:n {#2} #3 #4 #5 \internal_l_brace_var:n\{ #9 \internal_r_brace_var:n\}%
-        }%
-      }{%
-        \internal_operator_name:n {#2} #3 #4 #5 \internal_l_brace_var:n( #8 \internal_r_brace_var:n) \IfNoValueTF{#9}{}{\bgroup #9 \egroup}%
-      }%
-    }{%
-	  \internal_operator_name:n {#2} #3 #4 #5 \internal_l_brace_var:n[ #7 \internal_r_brace_var:n] \IfNoValueTF{#8}{}{(#8)} \IfNoValueTF{#9}{}{\bgroup #9 \egroup}%
-    }%
-  }
-
-  % Public interface for declaring braced math operators
-  \NewDocumentCommand \DeclareBracedMathOperator {smm} {
-    \IfBooleanTF{#1}{
-      \TemplateInstancePIE{#2}{\tmpl_braced_math_operator*}<#3>
-    }{
-      \TemplateInstancePIE{#2}{\tmpl_braced_math_operator}<#3>
-    }
-  }
-
-  % Helper function to loop over commands and redefine them
-  \cs_new:Nn \__xamsmath_redefine_operators:n{
-    \cs_undefine:c {#1}
-    \exp_args:Nc \DeclareBracedMathOperator {#1} {#1}
-  }
-  \cs_new:Nn \__xamsmath_redefine_operators_star:n{
-    \cs_undefine:c {#1}
-    \exp_args:NNc \DeclareBracedMathOperator* {#1} {#1}
-  }
-
-  % Redefine standard AMS operators with braced support
-  % Trigonometric functions
-  \clist_set:Nn\__ams_trig_functions_list{arcsin,arctan,cos,cosh,cot,coth,csc,sec,sin,sinh,tan,tanh}
-  \clist_set:Nn\__ams_explog_functions_list{exp,log,ln,lg}
-  \clist_set:Nn\__ams_algebraic_functions_list{arg,deg,det,dim,gcd,lcm,ker,im,hom} 
-  \clist_set:Nn\__ams_limit_operators_list{inf,sup,max,min,lin} 
-  
-  \clist_map_function:NN\__ams_trig_functions_list\__xamsmath_redefine_operators:n
-  \clist_map_function:NN\__ams_explog_functions_list\__xamsmath_redefine_operators:n
-  \clist_map_function:NN\__ams_algebraic_functions_list\__xamsmath_redefine_operators:n
-  \clist_map_function:NN\__ams_limit_operators_list\__xamsmath_redefine_operators_star:n
-
-  % Special operators with custom formatting
-  \cs_undefine:N \injlim
-  \DeclareBracedMathOperator* \injlim {inj \mkern 2mu lim}
-  \cs_undefine:N \projlim
-  \DeclareBracedMathOperator* \projlim {proj \mkern 2mu lim}
-  \cs_undefine:N \liminf
-  \DeclareBracedMathOperator* \liminf {lim \mkern 2mu inf}
-  \cs_undefine:N \limsup
-  \DeclareBracedMathOperator* \limsup {lim \mkern 2mu sup}
-  \cs_undefine:N \varliminf
-  \DeclareBracedMathOperator* \varliminf {\underline{lim}}
-  \cs_undefine:N \varlimsup
-  \DeclareBracedMathOperator* \varlimsup {\overline{lim}}
-  \cs_undefine:N \varinjlim
-  \DeclareBracedMathOperator* \varinjlim {\underrightarrow{\mathrm{lim}}}
-  \cs_undefine:N \varprojlim
-  \DeclareBracedMathOperator* \varprojlim {\underleftarrow{\mathrm{lim}}}
-
-  \ExplSyntaxOff
-\fi
-
-% Option: Operator scaling
-% Provides scalable large operator symbols (sum, integral, product)
-%\if@xamsmath@operators@scaling
-  %\RequirePackage{exscale}    % Better scaling for math symbols
-  %\RequirePackage{scalerel}   % Relative Scale symbols
-
-  % \ExplSyntaxOn
-  % Template for creating scalable operator variants
-  % Usage: \tmpl_scalable_operation<operator>{left}{right}{content}
-  % \NewTemplateCommand\tmpl_scalable_operation<m>{mmmm}{
-  % 	\scalerel{#1\limits#3#4#2}{#5}  % Scale operator to match content height
-  %}
-
-  % Create scalable variants of common operators
-  %\NewCommandCopy{\sum_symbol:}{\sum}
-  %\NewCommandCopy{\int_symbol:}{\int}
-  %\NewCommandCopy{\prod_symbol:}{\prod}
-  % https://tex.stackexchange.com/questions/22773/making-a-big-summation-sign
-  %\NewTemplateCommand\tmpl_manualy_scalable_symbol<m>{O{1.4}}{
-	%\newlength{\depthofsumsign}
-	%\setlength{\depthofsumsign}{\depthof{$\sum$}}
-	%\dim_set_eq:NN
-	%\mathop{%
-        %\raisebox
-            %{-#1\depthofsumsign+1\depthofsumsign}
-            %{\scalebox
-                %{#1}
-                %{$\displaystyle#1$}%
-            %}
-    %}
-  %}
-  
-  % Instantiate scalable versions with PIE-fication
-  %\TemplateInstancePIE\scaled_sum_symbol:\tmpl_scalable_operation<\sum_symbol:>
-  %\TemplateInstancePIE\scaled_int_symbol:\tmpl_scalable_operation<\int_symbol:>
-  %\TemplateInstancePIE\scaled_prod_symbol:\tmpl_scalable_operation<\prod_symbol:>
-
-  % Replace standard operators with scalable versions
-  % Starred version uses scaling, unstarred remains normal
-  %\RenewDocumentCommand{\sum}{s}{
-  %  \IfBooleanTF{#1}{\scaled_sum_symbol:}{\sum_symbol:}
-  %}
-  %\RenewDocumentCommand{\int}{s}{
-  %  \IfBooleanTF{#1}{\scaled_int_symbol:}{\int_symbol:}
-  %}
-  %\RenewDocumentCommand{\prod}{s}{
-  %  \IfBooleanTF{#1}{\scaled_prod_symbol:}{\prod_symbol:}
-  %}
-  %\ExplSyntaxOff
-
-  % Example usage:
-  %   $\sum_{i=1}^n x_i$                    % Normal size
-  %   $\sum*{\frac{1}{x_i^2}}$              % Scaled to match fraction height
-  %   $\int_{-\infty}^{+\infty} f(x)dx$     % Normal size
-  %   $\int*{\frac{\sin x}{x^2}}dx$         % Scaled to match fraction
-%\fi
-
-
-% Option: Equation microtypography
-% Provides fine-grained control over mathematical typesetting
-\if@xamsmath@equations@microtype
-  \RequirePackage{xfrac}        % Nice looking fractions
-  %\RequirePackage{bracealign}   % TODO: will be abalible on TeX Live 2025 Better brace alignment
-
-  % \changemathstyle{<style number>}
-  % Switch between different math styles programmatically
-  % Styles: 0=displaystyle, 1=cramped display, 2=textstyle, 3=cramped text, etc.
-  \newcommand{\changemathstyle}[1]{%
-    \ifcase#1\relax
-      \displaystyle\or
-      \crampeddisplaystyle\or
-      \textstyle\or
-      \crampedtextstyle\or
-      \scriptstyle\or
-      \crampedscriptstyle\or
-      \scriptscriptstyle\or
-      \crampedscriptscriptstyle
-    \fi
-  }
-
-  % Enhanced version of \cramped that checks current style
-  \renewcommand\cramped[1]{%
-    \ifodd\mathstyle\relax
-      % Already in cramped style
-      #1%
-    \else
-      \edef\currentstyle{\mathstyle}%
-      \changemathstyle{\numexpr\mathstyle+1}%  % Switch to cramped version
-      #1%
-      \changemathstyle{\currentstyle}%         % Restore original style
-    \fi
-  }
-
-  % Improved sizing for + and - in subscripts/superscripts
-  % TODO: improve hardcoded sizes
-  \newcommand{\medminus}{\mathop{\mathsmaller{-}}}  % Medium minus
-  \newcommand{\medplus}{\mathop{\mathsmaller{+}}}   % Medium plus
-  
-  % Enhanced infinity symbols with better visual balance
-  \newcommand{\pinfty}{{\raisebox{0.05ex}{\scaleobj{0.45}{+}}}\infty}  % Positive infinity
-  \newcommand{\ninfty}{{\raisebox{0.05ex}{\scaleobj{0.45}{-}}}\infty}  % Negative infinity
-  
-  % Example usage:
-  %   $x_{\medplus y}$    % Better sized plus in subscript
-  %   $\lim_{x \to \pinfty}$  % Positive infinity
-\fi
-
-% Option: Additional operators
-% Provides commonly used mathematical operators and notations
-\if@xamsmath@more@operators
-  \let\Proj\relax  % Ensure clean definition
-  \if@xamsmath@operators@braces
-	\DeclareBracedMathOperator{\Proj}{Proj}        % Projection operator
-	\DeclareBracedMathOperator*{\argmax}{argmax}    % Argument of maximum
-	\DeclareBracedMathOperator*{\argmin}{argmin}    % Argument of minimum
-  \else
-	\DeclareMathOperator{\Proj}{Proj}        % Projection operator
-	\DeclareMathOperator*{\argmax}{argmax}    % Argument of maximum
-	\DeclareMathOperator*{\argmin}{argmin}    % Argument of minimum
-  \fi
-  \newmathcommand{\loc}{\mathrm{loc}}      % Local (e.g., L^p_loc)
-  \newmathcommand{\const}{\mathrm{const}}  % Constant
-
-  % Example usage:
-  %   $\Proj_X Y$         % Projection of Y onto X
-  %   $\argmax_x f(x)$    % Value of x that maximizes f(x)
-  %   $L^p_\loc$          % Local L^p space
-  %   $f(x) = \const$     % Constant function
-\fi
-
-
-% Future enhancement: Encourage use of \leqslant and \geqslant
-% Uncomment to enforce better-looking inequality symbols
-%\disablecommand{\leq\geq}
-%\suggestcommand{\leq}{Use the better looking \leqslant.}
-%\suggestcommand{\geq}{Use the better looking \geqslant.}
-
-
-\NewDocumentCommand{\XAMSMathLoadPlugin}{m}{
-  \input{plugins/xamsmath.plugin.#1}
-}
 \endinput

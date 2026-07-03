@@ -1,0 +1,278 @@
+% =============================================================================
+%                              BRACED OPERATORS
+% =============================================================================
+%
+% Braced operator support loaded by the braces package option.
+%
+% This module configures paired-delimiter star behavior, defines a template for
+% operators that optionally accept bracketed, parenthesized, or braced operands,
+% and upgrades standard AMS operators to the same interface.
+
+% =============================================================================
+%                            OPERATOR DELIMITERS
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \leftoperatorbrace and \rightoperatorbrace
+%
+% Purpose:
+%   Provide mathcommand-aware left and right parentheses for operator operands.
+%
+% Usage:
+%   Internal braced-operator rendering.
+%
+% \leftoperatorbracket and \rightoperatorbracket
+%
+% Purpose:
+%   Provide mathcommand-aware left and right brackets for operator operands.
+%
+% Usage:
+%   Internal braced-operator rendering.
+
+\newmathcommand{\leftoperatorbrace}{\mlparen(}
+\newmathcommand{\rightoperatorbrace}{\mrparen)}
+\newmathcommand{\leftoperatorbracket}{\mlbrack[}
+\newmathcommand{\rightoperatorbracket}{\mrbrack]}
+
+% =============================================================================
+%                        PAIRED DELIMITER CONFIGURATION
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% Internal Functions
+% -----------------------------------------------------------------------------
+%
+% \swapifbranches
+%
+% Purpose:
+%   Reverses the true and false branches passed to a conditional. It is used to
+%   invert mathtools' paired-delimiter star behavior so unstarred delimiters can
+%   use the autoscaling branch.
+%
+% Parameters:
+%   #1 - Conditional command to invoke.
+%   #2 - Original true branch.
+%   #3 - Original false branch.
+%
+% Usage:
+%   Internal patch helper for \DeclarePairedDelimiter variants.
+
+\newcommand\swapifbranches[3]{#1{#3}{#2}}
+
+% -----------------------------------------------------------------------------
+% Mathtools Patches
+% -----------------------------------------------------------------------------
+%
+% Patch paired-delimiter declarations while mathtools' internal syntax is
+% enabled. The braces option intentionally swaps starred and unstarred sizing
+% behavior package-wide.
+
+\MHInternalSyntaxOn
+\patchcmd{\DeclarePairedDelimiter}{\@ifstar}{\swapifbranches\@ifstar}{}{}
+\patchcmd{\DeclarePairedDelimiterXPP}{\@ifstar}{\swapifbranches\@ifstar}{}{}
+\MHInternalSyntaxOff
+
+% =============================================================================
+%                         BRACED OPERATOR TEMPLATE
+% =============================================================================
+
+\ExplSyntaxOn
+
+% -----------------------------------------------------------------------------
+% Internal Templates
+% -----------------------------------------------------------------------------
+%
+% \tmpl_braced_math_operator
+%
+% Purpose:
+%   Renders an operator name, any absorbed PIE tokens, and an optional operand
+%   enclosed in square brackets, parentheses, or braces.
+%
+% Template parameters:
+%   <s> - Starred template instance uses \operatorname* for limit-style output.
+%   <m> - Operator name text.
+%
+% Runtime parameters:
+%   #1 - Star flag from the instantiated template.
+%   #2 - Operator name supplied by the template instance.
+%   #3 - Prime tokens absorbed by mathcommand.
+%   #4 - Index tokens absorbed by mathcommand.
+%   #5 - Exponent tokens absorbed by mathcommand.
+%   #6 - Star flag disabling \mleft and \mright around operands.
+%   #7 - Optional square-bracket operand.
+%   #8 - Optional parenthesized operand.
+%   #9 - Optional braced operand.
+%
+% Usage:
+%   \TemplateInstancePIE{\rank}{\tmpl_braced_math_operator}<rank>
+
+\NewTemplateCommand\tmpl_braced_math_operator<sm>{mmmsd[]d()g}{
+  \IfBooleanTF{#1}{
+    \cs_set:cpn {internal_operator_name:n} ##1 {\operatorname*{##1}}
+  }{
+    \cs_set:cpn {internal_operator_name:n} ##1 {\operatorname{##1}}
+  }
+  \IfBooleanTF{#6}{
+    \cs_set:cpn {internal_l_brace_var:n} ##1 {##1}
+    \cs_set:cpn {internal_r_brace_var:n} ##1 {##1}
+  }{
+    \cs_set:cpn {internal_l_brace_var:n} ##1 {\mleft##1}
+    \cs_set:cpn {internal_r_brace_var:n} ##1 {\mright##1}
+  }
+  \IfNoValueTF{#7}{
+    \IfNoValueTF{#8}{
+      \IfNoValueTF{#9}{
+        \internal_operator_name:n {#2} #3 #4 #5
+      }{
+        \internal_operator_name:n {#2} #3 #4 #5 \internal_l_brace_var:n\{ #9 \internal_r_brace_var:n\}
+      }
+    }{
+      \internal_operator_name:n {#2} #3 #4 #5 \internal_l_brace_var:n( #8 \internal_r_brace_var:n) \IfNoValueTF{#9}{}{\bgroup #9 \egroup}
+    }
+  }{
+    \internal_operator_name:n {#2} #3 #4 #5 \internal_l_brace_var:n[ #7 \internal_r_brace_var:n] \IfNoValueTF{#8}{}{(#8)} \IfNoValueTF{#9}{}{\bgroup #9 \egroup}
+  }
+}
+
+% =============================================================================
+%                          PUBLIC OPERATOR DECLARATION
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \DeclareBracedMathOperator
+%
+% Purpose:
+%   Declares a PIE-aware operator that can optionally take bracketed,
+%   parenthesized, or braced operands.
+%
+% Parameters:
+%   *  - Optional star declares a limit-style operator with \operatorname*.
+%   #1 - Operator command to define.
+%   #2 - Operator name to typeset.
+%
+% Generated command usage:
+%   \op
+%   \op_i^2
+%   \op[argument]
+%   \op(argument)
+%   \op{argument}
+
+\RenewDocumentCommand \DeclareBracedMathOperator {smm} {
+  \IfBooleanTF{#1}{
+    \TemplateInstancePIE{#2}{\tmpl_braced_math_operator*}<#3>
+  }{
+    \TemplateInstancePIE{#2}{\tmpl_braced_math_operator}<#3>
+  }
+}
+
+% =============================================================================
+%                         STANDARD OPERATOR REDEFINITION
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% Internal Functions
+% -----------------------------------------------------------------------------
+%
+% \__xamsmath_redefine_operators:n
+%
+% Purpose:
+%   Undefines an existing non-limit operator and redeclares it through
+%   \DeclareBracedMathOperator.
+%
+% Parameters:
+%   #1 - Operator name without a leading backslash.
+%
+% Usage:
+%   Internal mapping over comma lists of AMS operator names.
+
+\cs_new:Nn \__xamsmath_redefine_operators:n{
+  \cs_undefine:c {#1}
+  \exp_args:Nc \DeclareBracedMathOperator {#1} {#1}
+}
+
+% -----------------------------------------------------------------------------
+% Internal Functions
+% -----------------------------------------------------------------------------
+%
+% \__xamsmath_redefine_operators_star:n
+%
+% Purpose:
+%   Undefines an existing limit-style operator and redeclares it through starred
+%   \DeclareBracedMathOperator.
+%
+% Parameters:
+%   #1 - Operator name without a leading backslash.
+%
+% Usage:
+%   Internal mapping over comma lists of AMS operator names.
+
+\cs_new:Nn \__xamsmath_redefine_operators_star:n{
+  \cs_undefine:c {#1}
+  \exp_args:NNc \DeclareBracedMathOperator* {#1} {#1}
+}
+
+% -----------------------------------------------------------------------------
+% Operator Lists
+% -----------------------------------------------------------------------------
+%
+% Standard AMS operator groups are stored by semantic category so each group can
+% be upgraded through the correct starred or unstarred declaration helper.
+
+\clist_set:Nn\__ams_trig_functions_list{arcsin,arctan,cos,cosh,cot,coth,csc,sec,sin,sinh,tan,tanh}
+\clist_set:Nn\__ams_explog_functions_list{exp,log,ln,lg}
+\clist_set:Nn\__ams_algebraic_functions_list{arg,deg,det,dim,gcd,lcm,ker,im,hom}
+\clist_set:Nn\__ams_limit_operators_list{inf,sup,max,min,lin}
+
+% -----------------------------------------------------------------------------
+% Bulk Redefinition
+% -----------------------------------------------------------------------------
+%
+% Non-limit groups are redeclared without a star. Limit operators are redeclared
+% with a star so subscripts and superscripts behave like AMS limit operators.
+
+\clist_map_function:NN\__ams_trig_functions_list\__xamsmath_redefine_operators:n
+\clist_map_function:NN\__ams_explog_functions_list\__xamsmath_redefine_operators:n
+\clist_map_function:NN\__ams_algebraic_functions_list\__xamsmath_redefine_operators:n
+\clist_map_function:NN\__ams_limit_operators_list\__xamsmath_redefine_operators_star:n
+
+% =============================================================================
+%                           SPECIAL LIMIT OPERATORS
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% The following AMS limit operators have printed names that do not match their
+% control sequence names exactly. Each is undefined before being redeclared as a
+% braced, limit-style operator.
+%
+% Usage:
+%   \liminf_{n \to \infty} a_n
+%   \injlim(A_i)
+%   \varprojlim{X_i}
+
+\cs_undefine:N \injlim
+\DeclareBracedMathOperator* \injlim {inj \mkern 2mu lim}
+\cs_undefine:N \projlim
+\DeclareBracedMathOperator* \projlim {proj \mkern 2mu lim}
+\cs_undefine:N \liminf
+\DeclareBracedMathOperator* \liminf {lim \mkern 2mu inf}
+\cs_undefine:N \limsup
+\DeclareBracedMathOperator* \limsup {lim \mkern 2mu sup}
+\cs_undefine:N \varliminf
+\DeclareBracedMathOperator* \varliminf {\underline{lim}}
+\cs_undefine:N \varlimsup
+\DeclareBracedMathOperator* \varlimsup {\overline{lim}}
+\cs_undefine:N \varinjlim
+\DeclareBracedMathOperator* \varinjlim {\underrightarrow{\mathrm{lim}}}
+\cs_undefine:N \varprojlim
+\DeclareBracedMathOperator* \varprojlim {\underleftarrow{\mathrm{lim}}}
+
+\ExplSyntaxOff

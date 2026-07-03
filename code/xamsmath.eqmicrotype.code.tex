@@ -1,0 +1,76 @@
+% =============================================================================
+%                         EQUATION MICROTYPOGRAPHY
+% =============================================================================
+%
+% Compact math-style utilities and small operator symbols loaded by the
+% eqmicrotype package option.
+
+% =============================================================================
+%                              STYLE SWITCHING
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% Internal Functions
+% -----------------------------------------------------------------------------
+%
+% \changemathstyle
+%
+% Purpose:
+%   Selects a normal or cramped math style by numeric mathstyle index.
+%
+% Parameters:
+%   #1 - Numeric mathstyle index from 0 through 7.
+%
+% Usage:
+%   \changemathstyle{2}
+
+\newcommand{\changemathstyle}[1]{\ifcase#1\relax\displaystyle\or\crampeddisplaystyle\or\textstyle\or\crampedtextstyle\or\scriptstyle\or\crampedscriptstyle\or\scriptscriptstyle\or\crampedscriptscriptstyle\fi}
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \cramped
+%
+% Purpose:
+%   Replaces mathtools' cramped wrapper with a style-preserving implementation
+%   that advances only non-cramped styles to their cramped counterpart.
+%
+% Parameters:
+%   #1 - Math material to typeset in cramped style.
+%
+% Usage:
+%   \cramped{\sum_{i=1}^n x_i}
+
+\renewcommand\cramped[1]{\ifodd\mathstyle\relax#1\else\edef\currentstyle{\mathstyle}\changemathstyle{\numexpr\mathstyle+1}#1\changemathstyle{\currentstyle}\fi}
+
+% =============================================================================
+%                              COMPACT SYMBOLS
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% User Commands
+% -----------------------------------------------------------------------------
+%
+% \medminus and \medplus
+%
+% Purpose:
+%   Provide reduced-size plus and minus operators for compact expressions.
+%
+% Usage:
+%   a \medminus b
+%   a \medplus b
+%
+% \pinfty and \ninfty
+%
+% Purpose:
+%   Typeset positive and negative infinity with compact raised signs.
+%
+% Usage:
+%   x \to \pinfty
+%   x \to \ninfty
+
+\newcommand{\medminus}{\mathop{\mathsmaller{-}}}
+\newcommand{\medplus}{\mathop{\mathsmaller{+}}}
+\newcommand{\pinfty}{{\raisebox{0.05ex}{\scaleobj{0.45}{+}}}\infty}
+\newcommand{\ninfty}{{\raisebox{0.05ex}{\scaleobj{0.45}{-}}}\infty}

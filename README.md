@@ -14,35 +14,57 @@
 - `mathtools` for enhanced mathematical typesetting
 - `mathcommand` for PIE notation handling
 
-
-AFAIK you need LuaLaTeX to use some features
+> Some features require LuaLaTeX.
 
 ### Installation Methods
 
-**Method 1: Manual Installation**
+**Method 1: Git Submodule**
 ```bash
-# Copy xamsmath.sty and plugins/ to your LaTeX path
+cd your-project/
+git submodule add https://github.com/anomalyco/xamsmath.git
+```
+
+**Method 2: texmf Tree (Global)**
+```bash
+# Clone or download the repository into your local texmf tree
+git clone https://github.com/anomalyco/xamsmath.git ~/texmf/tex/latex/xamsmath/
+```
+
+**Method 3: Manual Installation**
+```bash
+# Copy xamsmath.sty, code/, and plugins/ to your LaTeX path
 cp xamsmath.sty ~/texmf/tex/latex/xamsmath/
+cp -r code ~/texmf/tex/latex/xamsmath/
 cp plugins/*.tex ~/texmf/tex/latex/xamsmath/plugins/
 ```
 
-**Method 2: Project Local**
-```bash
-# Place in your project directory
-project/
+**Method 4: Project Local**
+```
+your-project/
 ├── xamsmath.sty
+├── code/
+│   ├── xamsmath.core.code.tex
+│   ├── xamsmath.braces.code.tex
+│   ├── xamsmath.eqmicrotype.code.tex
+│   ├── xamsmath.fonts.code.tex
+│   ├── xamsmath.operators.code.tex
+│   └── xamsmath.symbols.code.tex
 ├── plugins/
-│   ├── foundations.tex
-│   ├── algebra.tex
-│   ├── calculus.tex
-│   ├── combinatorics.tex
-│   └── probability.tex
+│   ├── xamsmath.plugin.foundations.tex
+│   ├── xamsmath.plugin.algebra.tex
+│   ├── xamsmath.plugin.calculus.tex
+│   ├── xamsmath.plugin.combinatorics.tex
+│   └── xamsmath.plugin.probability.tex
+├── examples/
+│   ├── example.tex
+│   ├── latexmkrc
+│   └── .build/
 └── main.tex
 ```
 
 ## ToDo
-- [ ] Split examples and move them in examples directory
-- [ ] Extend examples and ensure that  each example has code snippet before it (in rendered PDF)
+- [x] Split examples and move them in examples directory
+- [x] Extend examples and ensure that each example has code snippet before it (in rendered PDF)
 - [ ] Microtypography features: slight operator extension
 - [ ] Microtypography features: alignment of under/overbraces
 - [ ] Microtypography features: under/overbraces that do not interact with autoscale braces 
@@ -54,4 +76,5 @@ project/
 
 ## Version History
 
+- **v0.2-alpha** (2026-01-01): Restructured codebase into modular `code/` directory; reworked all plugins with extended notation support; added braces, eqmicrotype, fonts, and operators modules; improved installation documentation.
 - **v0.1-alpha** (2025-10-06): Initial release with core features and plugin system

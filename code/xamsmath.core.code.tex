@@ -1,0 +1,211 @@
+% =============================================================================
+%                              CORE COMMANDS
+% =============================================================================
+%
+% Shared LaTeX3 helpers used by the package entry point and all plugins.
+%
+% This module defines Prime/Index/Exponent wrapping, split paired delimiters,
+% lightweight command templates, and a fallback braced-operator declaration.
+
+\ExplSyntaxOn
+
+% =============================================================================
+%                          PRIME INDEX EXPONENT HELPERS
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% Public Commands
+% -----------------------------------------------------------------------------
+%
+% \piefication
+%
+% Purpose:
+%   Replaces an existing command with a wrapper that absorbs trailing prime,
+%   index, and exponent tokens through mathcommand's PIE parser.
+%
+% Parameters:
+%   #1 - Existing command control sequence to wrap.
+%
+% Usage:
+%   \newmathcommand{\Foo}{\mathcal{F}}
+%   \piefication{\Foo}
+%   \Foo'_i^2
+
+\NewDocumentCommand{\piefication}{m}{
+    \exp_args:Nc \NewCommandCopy {old_\cs_to_str:N #1} {#1}
+    \cs_set:cpn {internal_\cs_to_str:N #1:w} {
+        \exp_args:Nc \__mathcommand_absorb_PIE:nw {old_\cs_to_str:N #1}
+    }
+    \exp_args:Nnc \RenewCommandCopy {#1} {internal_\cs_to_str:N #1:w}
+}
+
+% =============================================================================
+%                            SPLIT DELIMITER HELPERS
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% Public Commands
+% -----------------------------------------------------------------------------
+%
+% \DeclarePairedSplitDelimiter
+%
+% Purpose:
+%   Declares a paired delimiter command that can split its body at a vertical
+%   bar. This is intended for set-builder notation, conditional probabilities,
+%   and similar expressions.
+%
+% Parameters:
+%   #1 - Public command to create.
+%   #2 - Left delimiter token.
+%   #3 - Right delimiter token.
+%
+% Generated command parameters:
+%   *  - Uses the configured starred delimiter behavior.
+%   [] - Optional delimiter size command, such as \big or \Big.
+%   #1 - Body to typeset. A single | separates left and right parts.
+%
+% Usage:
+%   \DeclarePairedSplitDelimiter{\set}{\{}{\}}
+%   \set{x | x > 0}
+%   \set[\Big]{x | x^2 > 1}
+
+\NewDocumentCommand{\DeclarePairedSplitDelimiter}{mmm}{
+    \exp_args:Nc\DeclarePairedDelimiter{internal_base_\cs_to_str:N#1}{#2}{#3}
+    \exp_args:Nc\DeclarePairedDelimiterX{internal_split_\cs_to_str:N#1}[2]{#2}{#3}
+    {##1 \nonscript\:\delimsize\vert\allowbreak\nonscript\:\mathopen{} ##2}
+    \exp_args:Nc\NewDocumentCommand{internal_\cs_to_str:N#1}{somm}{
+        \IfNoValueTF{##2}{
+            \IfNoValueTF{##4}{
+              \IfBooleanTF{##1}{
+                \use:c{internal_base_\cs_to_str:N#1}{##3}
+              }{
+                \use:c{internal_base_\cs_to_str:N#1}*{##3}
+              }
+            }{
+              \IfBooleanTF{##1}{
+                \use:c{internal_split_\cs_to_str:N#1}*{##3}{##4}
+              }{
+                \use:c{internal_split_\cs_to_str:N#1}{##3}{##4}
+              }
+            }
+        }{
+            \IfNoValueTF{##3}{
+                \use:c{internal_base_\cs_to_str:N#1}*[##2]{##3}
+            }{
+                \use:c{internal_split_\cs_to_str:N#1}*[##2]{##3}{##4}
+            }
+        }
+    }
+    \NewDocumentCommand{#1}{so >{\SplitArgument{1}{|} } m}{
+        \IfNoValueTF{##2}{
+          \IfBooleanTF{##1}{
+            \use:c{internal_\cs_to_str:N#1}*##3
+          }{
+            \use:c{internal_\cs_to_str:N#1}##3
+          }
+        }{
+            \use:c{internal_\cs_to_str:N#1}[##2]##3
+        }
+    }
+}
+
+% =============================================================================
+%                              TEMPLATE HELPERS
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% Public Commands
+% -----------------------------------------------------------------------------
+%
+% \NewTemplateCommand
+%
+% Purpose:
+%   Defines a reusable command template whose first argument list is supplied in
+%   angle brackets and whose ordinary arguments are supplied by the caller.
+%
+% Parameters:
+%   #1 - Template command to define.
+%   #2 - Template parameter signature inside angle brackets.
+%   #3 - Runtime parameter signature.
+%   #4 - Replacement text.
+%
+% Usage:
+%   \NewTemplateCommand\tmpl_example<mm>{m}{...}
+
+\NewDocumentCommand{\NewTemplateCommand}{m r<> m m}{
+    \NewDocumentCommand{#1}{#2#3}{#4}
+}
+
+% -----------------------------------------------------------------------------
+% Public Commands
+% -----------------------------------------------------------------------------
+%
+% \TemplateInstance
+%
+% Purpose:
+%   Creates a zero-argument public command by partially applying values to a
+%   template command.
+%
+% Parameters:
+%   #1 - Command to define.
+%   #2 - Template command to instantiate.
+%   #3 - Comma-separated template values inside angle brackets.
+%
+% Usage:
+%   \TemplateInstance\foo\tmpl_example<a,b>
+
+\NewDocumentCommand{\TemplateInstance}{m m >{\SplitList {,}} r<>}{
+    \NewDocumentCommand{#1}{}{#2#3}
+}
+
+% -----------------------------------------------------------------------------
+% Public Commands
+% -----------------------------------------------------------------------------
+%
+% \TemplateInstancePIE
+%
+% Purpose:
+%   Creates a template instance and immediately wraps it with \piefication so it
+%   can absorb prime, index, and exponent syntax.
+%
+% Parameters:
+%   #1 - Command to define.
+%   #2 - Template command to instantiate.
+%   #3 - Comma-separated template values inside angle brackets.
+%
+% Usage:
+%   \TemplateInstancePIE\od\tmpl_derivative_frac<\dif, \frac>
+
+\NewDocumentCommand{\TemplateInstancePIE}{m m >{\SplitList {,}} r<>}{
+    \NewDocumentCommand{#1}{}{#2#3}
+    \piefication{#1}
+}
+
+% =============================================================================
+%                         BRACED OPERATOR FALLBACK
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+% Public Commands
+% -----------------------------------------------------------------------------
+%
+% \DeclareBracedMathOperator
+%
+% Purpose:
+%   Provides a fallback operator declaration when the braces module is not
+%   loaded. The braces module renews this command with richer delimiter support.
+%
+% Parameters:
+%   *  - Optional star requests a limit-style operator.
+%   #1 - Operator command to define.
+%   #2 - Operator name to typeset.
+%
+% Usage:
+%   \DeclareBracedMathOperator{\rank}{rank}
+%   \DeclareBracedMathOperator*{\argmax}{argmax}
+
+\ProvideDocumentCommand{\DeclareBracedMathOperator}{smm}{
+  \IfBooleanTF{#1}{\DeclareMathOperator*{#2}{#3}}{\DeclareMathOperator{#2}{#3}}
+}
+
+\ExplSyntaxOff
