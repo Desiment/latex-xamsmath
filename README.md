@@ -56,7 +56,7 @@ your-project/
 │   ├── xamsmath.plugin.combinatorics.tex
 │   └── xamsmath.plugin.probability.tex
 ├── examples/
-│   ├── example.tex
+│   ├── example.xamsmath.overview.tex
 │   ├── latexmkrc
 │   └── .build/
 └── main.tex
