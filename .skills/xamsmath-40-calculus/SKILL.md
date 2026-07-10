@@ -1,3 +1,13 @@
+---
+name: xamsmath-40-calculus
+description: Use the xamsmath calculus plugin for derivatives, integrals, differentials, and calculus notation.
+license: MIT
+compatibility: opencode
+metadata:
+  package: xamsmath
+  topic: calculus
+---
+
 # xamsmath: Calculus Plugin
 
 ## When To Use

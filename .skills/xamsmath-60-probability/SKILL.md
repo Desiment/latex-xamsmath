@@ -1,3 +1,13 @@
+---
+name: xamsmath-60-probability
+description: Use the xamsmath probability plugin for expectation, variance, distributions, and probability notation.
+license: MIT
+compatibility: opencode
+metadata:
+  package: xamsmath
+  topic: probability
+---
+
 # xamsmath: Probability Plugin
 
 ## When To Use

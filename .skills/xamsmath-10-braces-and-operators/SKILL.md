@@ -1,3 +1,13 @@
+---
+name: xamsmath-10-braces-and-operators
+description: Use xamsmath braces, autosized operators, math fonts, and compact math microtype helpers.
+license: MIT
+compatibility: opencode
+metadata:
+  package: xamsmath
+  topic: braces-and-operators
+---
+
 # xamsmath: Braces, Operators, Fonts, And Microtype
 
 ## When To Use

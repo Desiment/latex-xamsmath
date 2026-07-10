@@ -1,3 +1,13 @@
+---
+name: xamsmath-30-algebra
+description: Use the xamsmath algebra plugin for groups, rings, fields, closures, spans, and algebraic notation.
+license: MIT
+compatibility: opencode
+metadata:
+  package: xamsmath
+  topic: algebra
+---
+
 # xamsmath: Algebra Plugin
 
 ## When To Use

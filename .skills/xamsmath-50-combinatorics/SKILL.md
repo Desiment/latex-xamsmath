@@ -1,3 +1,13 @@
+---
+name: xamsmath-50-combinatorics
+description: Use the xamsmath combinatorics plugin for binomial, multinomial, partition, and counting notation.
+license: MIT
+compatibility: opencode
+metadata:
+  package: xamsmath
+  topic: combinatorics
+---
+
 # xamsmath: Combinatorics Plugin
 
 ## When To Use

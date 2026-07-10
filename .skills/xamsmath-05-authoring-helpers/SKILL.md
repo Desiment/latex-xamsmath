@@ -1,3 +1,13 @@
+---
+name: xamsmath-05-authoring-helpers
+description: Use xamsmath package-authoring helper commands for declaring aliases, paired delimiters, and operators.
+license: MIT
+compatibility: opencode
+metadata:
+  package: xamsmath
+  topic: authoring-helpers
+---
+
 # xamsmath: Authoring Helpers
 
 ## When To Use

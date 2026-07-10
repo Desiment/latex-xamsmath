@@ -1,3 +1,13 @@
+---
+name: xamsmath-00-loading-options
+description: Load xamsmath with the right package options and built-in plugins for mathematical documents.
+license: MIT
+compatibility: opencode
+metadata:
+  package: xamsmath
+  topic: loading-options
+---
+
 # xamsmath: Loading And Options
 
 ## When To Use

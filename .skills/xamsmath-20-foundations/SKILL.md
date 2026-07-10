@@ -1,3 +1,13 @@
+---
+name: xamsmath-20-foundations
+description: Use the xamsmath foundations plugin for sets, logic, number systems, and foundational notation.
+license: MIT
+compatibility: opencode
+metadata:
+  package: xamsmath
+  topic: foundations
+---
+
 # xamsmath: Foundations Plugin
 
 ## When To Use
