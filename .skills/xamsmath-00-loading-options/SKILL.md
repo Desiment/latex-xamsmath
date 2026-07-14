@@ -48,6 +48,7 @@ Load plugins after the package:
 
 ## Package Options
 
+- `unicodemath`: loads `unicode-math` instead of `amsfonts` and `amssymb`.
 - `fonts`: loads extra math font dependencies and defines `\mathbx`.
 - `symbols`: reserved stable extension point; currently defines no user command.
 - `operators`: defines `\Proj`, `\argmax`, `\argmin`, `\loc`, and `\const`.
@@ -82,6 +83,8 @@ Example:
 - Use `\XAMSMathLoadPlugin` only after `\usepackage{xamsmath}`.
 - Use `[all]` for documents that need most package features.
 - Use focused options for minimal documents.
+- The `unicodemath` option replaces `amsfonts` and `amssymb` with `unicode-math`. It is not included in `all`.
+- When `unicodemath` is active, the `fonts` option skips `upgreek` and `eucal` since `unicode-math` provides Greek letters natively.
 - The `braces` option changes behavior of many standard operators such as `\sin`, `\log`, `\det`, and `\lim`.
 - Some plugin commands depend on option-defined commands. For example, `foundations` command `\ind` uses `\mathbx`, so load `fonts` before using it.
 

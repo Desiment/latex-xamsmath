@@ -4,44 +4,14 @@
 %
 % Enhanced AMSMath package entry point.
 %
-% This file declares package metadata, loads required dependencies, registers
-% feature options, conditionally loads implementation modules, and exposes the
-% public plugin loader used by documents.
+% This file declares package metadata, registers feature options, loads
+% required dependencies, conditionally loads implementation modules, and
+% exposes the public plugin loader used by documents.
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{xamsmath}[2026/01/01 alpha-0.1 Enhanced AMSMath with LaTeX3 features]
 
-% =============================================================================
-%                                DEPENDENCIES
-% =============================================================================
-%
-% Base mathematical packages required by every xamsmath configuration.
-%
-% amsmath, amsfonts, and amssymb provide the baseline AMS math interface.
-% mathcommand supplies Prime/Index/Exponent parsing used throughout plugins.
-% extarrows, mathtools, centernot, stackrel, and kvoptions provide symbols,
-% delimiter helpers, negated relations, stacked annotations, and package option
-% processing.
-
-\RequirePackage{amsmath}
-\RequirePackage{amsfonts}
-\RequirePackage{amssymb}
-\RequirePackage{mathcommand}
-\RequirePackage{extarrows}
-\RequirePackage{mathtools}
-\RequirePackage{centernot}
-\RequirePackage{stackrel}
 \RequirePackage{kvoptions}
-
-% =============================================================================
-%                                CORE HELPERS
-% =============================================================================
-%
-% Core command templates are loaded unconditionally because later modules and
-% plugins rely on \piefication, \DeclarePairedSplitDelimiter, and template
-% instance helpers.
-
-\input{code/xamsmath.core.code.tex}
 
 % =============================================================================
 %                              PACKAGE OPTIONS
@@ -60,12 +30,14 @@
 % Feature Flags
 % -----------------------------------------------------------------------------
 %
+% unicodemath: loads unicode-math instead of amsfonts and amssymb.
 % fonts: enables additional math alphabets and font dependencies.
 % symbols: reserves a module for extra symbol definitions.
 % operators: enables common additional math operators.
 % braces: enables braced operators and autoscaling delimiter behavior.
 % eqmicrotype: enables equation-level microtypographic helpers.
 
+\DeclareBoolOption[false]{unicodemath}
 \DeclareBoolOption[false]{fonts}
 \DeclareBoolOption[false]{symbols}
 \DeclareBoolOption[false]{operators}
@@ -98,9 +70,50 @@
 % Option Processing
 % -----------------------------------------------------------------------------
 %
-% Evaluate user-provided package options before conditional module loading.
+% Evaluate user-provided package options before conditional dependency loading.
 
 \ProcessKeyvalOptions{xamsmath}
+
+% =============================================================================
+%                                DEPENDENCIES
+% =============================================================================
+%
+% Base mathematical packages required by every xamsmath configuration.
+%
+% amsmath provides the baseline AMS math interface regardless of font setup.
+% When unicodemath is enabled, unicode-math replaces amsfonts and amssymb.
+% mathcommand supplies Prime/Index/Exponent parsing used throughout plugins.
+% extarrows, mathtools, centernot, and stackrel provide symbols, delimiter
+% helpers, negated relations, and stacked annotations.
+
+\RequirePackage{amsmath}
+
+\if@xamsmath@unicodemath
+  \RequirePackage{unicode-math}
+  \AtBeginDocument{
+    \let\Box\mdlgwhtsquare
+    \let\Diamond\mdlgwhtlozenge
+  }
+\else
+  \RequirePackage{amsfonts}
+  \RequirePackage{amssymb}
+\fi
+
+\RequirePackage{mathcommand}
+\RequirePackage{extarrows}
+\RequirePackage{mathtools}
+\RequirePackage{centernot}
+\RequirePackage{stackrel}
+
+% =============================================================================
+%                                CORE HELPERS
+% =============================================================================
+%
+% Core command templates are loaded unconditionally because later modules and
+% plugins rely on \piefication, \DeclarePairedSplitDelimiter, and template
+% instance helpers.
+
+\input{code/xamsmath.core.code.tex}
 
 % =============================================================================
 %                                MODULE LOADING
@@ -111,10 +124,14 @@
 % -----------------------------------------------------------------------------
 %
 % The fonts option loads font packages before defining xamsmath math alphabets.
+% When unicodemath is active, upgreek and eucal are skipped because
+% unicode-math provides Greek letters natively and may conflict with eucal.
 
 \if@xamsmath@fonts
-  \RequirePackage{upgreek}
-  \RequirePackage[mathscr]{eucal}
+  \if@xamsmath@unicodemath\else
+    \RequirePackage{upgreek}
+    \RequirePackage[mathscr]{eucal}
+  \fi
   \input{code/xamsmath.fonts.code.tex}
 \fi
 
