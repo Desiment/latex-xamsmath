@@ -2,7 +2,14 @@
 %                              SYMBOL EXTENSIONS
 % =============================================================================
 %
-% Reserved module for package-level symbol definitions.
+% Package-level symbol definitions and unicode-math compatibility aliases.
 %
-% This file is intentionally empty for now so the symbols option has a stable
-% extension point without changing the package loader.
+% unicode-math provides these glyphs under Unicode symbol names rather than the
+% AMS-style names supplied by amssymb.
+
+\if@xamsmath@unicodemath
+  \AtBeginDocument{
+    \let\Box\mdlgwhtsquare
+    \let\Diamond\mdlgwhtlozenge
+  }
+\fi

@@ -50,7 +50,7 @@ Load plugins after the package:
 
 - `unicodemath`: loads `unicode-math` instead of `amsfonts` and `amssymb`.
 - `fonts`: loads extra math font dependencies and defines `\mathbx`.
-- `symbols`: reserved stable extension point; currently defines no user command.
+- `symbols`: loads package-level symbol definitions and unicode-math compatibility aliases.
 - `operators`: defines `\Proj`, `\argmax`, `\argmin`, `\loc`, and `\const`.
 - `braces`: upgrades braced operator behavior and many standard math operators.
 - `eqmicrotype`: defines compact math-style helpers and small sign symbols.

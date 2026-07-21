@@ -32,7 +32,7 @@
 %
 % unicodemath: loads unicode-math instead of amsfonts and amssymb.
 % fonts: enables additional math alphabets and font dependencies.
-% symbols: reserves a module for extra symbol definitions.
+% symbols: enables package-level extra symbol definitions.
 % operators: enables common additional math operators.
 % braces: enables braced operators and autoscaling delimiter behavior.
 % eqmicrotype: enables equation-level microtypographic helpers.
@@ -87,22 +87,18 @@
 % helpers, negated relations, and stacked annotations.
 
 \RequirePackage{amsmath}
+\RequirePackage{extarrows}
+\RequirePackage{mathtools}
+\RequirePackage{centernot}
 
 \if@xamsmath@unicodemath
-  \RequirePackage{unicode-math}
-  \AtBeginDocument{
-    \let\Box\mdlgwhtsquare
-    \let\Diamond\mdlgwhtlozenge
-  }
+	\RequirePackage[warnings-off={mathtools-colon,mathtools-overbracket}]{unicode-math}
 \else
   \RequirePackage{amsfonts}
   \RequirePackage{amssymb}
 \fi
 
 \RequirePackage{mathcommand}
-\RequirePackage{extarrows}
-\RequirePackage{mathtools}
-\RequirePackage{centernot}
 \RequirePackage{stackrel}
 
 % =============================================================================
@@ -128,10 +124,11 @@
 % unicode-math provides Greek letters natively and may conflict with eucal.
 
 \if@xamsmath@fonts
-  \if@xamsmath@unicodemath\else
+	% EXPERIMENTAL: for now it is seem's to work
+  %\if@xamsmath@unicodemath\else
     \RequirePackage{upgreek}
     \RequirePackage[mathscr]{eucal}
-  \fi
+  %\fi
   \input{code/xamsmath.fonts.code.tex}
 \fi
 
@@ -139,7 +136,7 @@
 % Symbols Module
 % -----------------------------------------------------------------------------
 %
-% The symbols option loads the symbol extension module when requested.
+% The symbols option loads package-level symbol definitions when requested.
 
 \if@xamsmath@symbols
   \input{code/xamsmath.symbols.code.tex}
