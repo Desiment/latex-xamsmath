@@ -109,6 +109,40 @@ Internal template used by `\DeclareBracedMathOperator` when the `braces` option
 is active. Package authors should usually call `\DeclareBracedMathOperator`
 instead of instantiating this template directly.
 
+## Delimiter Conventions
+
+Prefer specialized delimiter commands when they exist:
+
+- Use `\abs{...}` for absolute value or modulus when the algebra plugin is
+  loaded. See `xamsmath-30-algebra`.
+- Use `\set{...}` for set notation and set-builder notation when the
+  foundations plugin is loaded. See `xamsmath-20-foundations`.
+- Use probability plugin delimiters such as `\P(...)`, `\Law(...)`, `\E[...]`,
+  and `\D[...]` for probability notation. See `xamsmath-60-probability`.
+- Use upgraded standard operators directly, for example `\sin(...)`,
+  `\log[...]`, and `\det{...}`.
+
+Use `\mleft...\mright` when delimiters bound the argument of a function,
+operator, or functional expression and no more specific command exists:
+
+```latex
+f\mleft(\frac{x}{2}\mright)
+T\mleft[\sum_{i=1}^n x_i\mright]
+\Phi\mleft(\int_0^1 f(x)\,\dd{x}\mright)
+```
+
+Use ordinary `\left...\right` when delimiters express arithmetic grouping or
+structural grouping rather than a function/operator argument:
+
+```latex
+\left(\frac{a+b}{c+d}\right)^2
+\left[\frac{j-1}{m},\frac jm\right)
+```
+
+The priority is: specialized command first, then `\mleft...\mright` for
+function/operator arguments, then `\left...\right` for arithmetic or structural
+grouping.
+
 ## Eqmicrotype Option
 
 ### `\cramped{<math>}`
@@ -147,12 +181,19 @@ Low-level style selector used by `\cramped`. Prefer `\cramped` in documents.
 - With `braces`, do not wrap standard operators in manual `\left...\right` just to size their immediate argument.
 - Use ordinary function notation for simple arguments, for example `\sin(x)`.
 - Use `\DeclareBracedMathOperator*` for custom limit-style operators.
+- Use `\mleft...\mright` for function/operator arguments when no specialized
+  delimiter command or upgraded operator syntax applies.
+- Use `\left...\right` for arithmetic grouping, structural grouping, and
+  interval notation.
 
 ## Avoid
 
 ```latex
 \sin\left(\frac{x}{2}\right)
 \exp\left(-\frac{x^2}{2}\right)
+f\left(\frac{x}{2}\right)
+\left|\frac{a}{b}\right|
+\{x \in \R \mid x > 0\}
 ```
 
 Prefer:
@@ -160,4 +201,7 @@ Prefer:
 ```latex
 \sin(\frac{x}{2})
 \exp(-\frac{x^2}{2})
+f\mleft(\frac{x}{2}\mright)
+\abs{\frac{a}{b}}
+\set{x \in \R | x > 0}
 ```
