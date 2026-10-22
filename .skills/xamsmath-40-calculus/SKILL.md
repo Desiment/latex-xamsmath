@@ -98,7 +98,12 @@ public derivative commands rather than this template directly.
 
 ## Rules
 
-- Use `\dif` in integrals: `\int f(x) \dif x`.
+- Always use `\dif` for integration differentials when the calculus plugin is
+  loaded: `\int f(x) \dif x`, `\int g(t) \dif t`, and
+  `\int h(x_1,\ldots,x_n) \dif x_1 \cdots \dif x_n`.
+- Do not write raw differentials such as `dx`, `dt`, `dx_i`, or `du_i` in
+  mathematical source when this plugin is loaded; write `\dif x`, `\dif t`,
+  `\dif x_i`, and `\dif u_i` instead.
 - Put derivative orders and evaluation suffixes before derivative arguments: `\od^2_{x=0}{y}{x}`.
 - Do not place primes before derivative commands; the implementation rejects primes.
 - Use `\pd^2{u}{x \partial y}` for mixed partials.
